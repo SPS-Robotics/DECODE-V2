@@ -1,21 +1,17 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
-import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.extensions.pedro.PedroDriverControlled;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
@@ -31,12 +27,11 @@ public class MainTeleOp extends NextFTCOpMode {
     public MainTeleOp() {
         addComponents(
                 BulkReadComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE)
-                //new PedroComponent(Constants::createFollower)
+                BindingsComponent.INSTANCE,
+                new SubsystemComponent(Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
+                new PedroComponent(Constants::createFollower)
         );
     }
-
-    // Pose goalPose, loadingZone;
 
     private final MotorEx frontLeft = new MotorEx("frontLeft").brakeMode().zeroed().reversed();
     private final MotorEx frontRight = new MotorEx("frontRight").brakeMode().zeroed();
@@ -47,19 +42,8 @@ public class MainTeleOp extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        /*
-        PedroComponent.follower().setPose(RobotState.autoEndPose);
-        RobotState.Alliance alliance = RobotState.alliance;
-
-        if (alliance == RobotState.Alliance.BLUE) {
-            goalPose = SoftwareConstants.Poses.blueGoalPose;
-            loadingZone = SoftwareConstants.Poses.blueLoadingZoneCorner;
-        }
-        else {
-            goalPose = SoftwareConstants.Poses.redGoalPose;
-            loadingZone = SoftwareConstants.Poses.redLoadingZoneCorner;
-        }
-         */
+        PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
+        Gamepads.gamepad1().rightStickX();
     }
 
     @Override
@@ -97,30 +81,28 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesTrue(Intake.INSTANCE.outtakeArtifacts)
                 .whenBecomesFalse(Intake.INSTANCE.stopIntake);
 
+        Gamepads.gamepad1().triangle()
+                .whenBecomesTrue(Turret.INSTANCE.toggleTracking);
 
-        Gamepads.gamepad1().rightBumper().and(Gamepads.gamepad1().rightTrigger().greaterThan(0.05))
-                .whenBecomesTrue(new SequentialGroup(
-                        Flywheel.INSTANCE.turnFlywheelOn,
-                        Intake.INSTANCE.openGate
+        Gamepads.gamepad1().leftBumper()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Flywheel.INSTANCE.firingSpeed)
+                .whenBecomesFalse(Flywheel.INSTANCE.lowSpeed);
+
+        Gamepads.gamepad1().rightBumper()
+                .whenBecomesTrue(new ParallelGroup(
+                        Intake.INSTANCE.openGate,
+                        Intake.INSTANCE.intakeArtifacts
                 ))
                 .whenBecomesFalse(new ParallelGroup(
-                        Flywheel.INSTANCE.turnFlywheelOff,
-                        Intake.INSTANCE.closeGate
+                        Intake.INSTANCE.closeGate,
+                        Intake.INSTANCE.stopIntake
                 ));
-
-        Gamepads.gamepad1().dpadRight()
-                .whenBecomesTrue(Turret.INSTANCE.turnTurretRight)
-                .whenBecomesFalse(Turret.INSTANCE.stopTurret);
-
-        Gamepads.gamepad1().dpadLeft()
-                .whenBecomesTrue(Turret.INSTANCE.turnTurretLeft)
-                .whenBecomesFalse(Turret.INSTANCE.stopTurret);
-
-
     }
 
     @Override
     public void onUpdate() {
+        telemetry.addData("Robot Pose", PedroComponent.follower().getPose());
     }
     @Override
     public void onStop() { }
