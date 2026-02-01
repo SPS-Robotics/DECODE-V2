@@ -58,6 +58,7 @@ public class CloseGate15 extends NextFTCOpMode {
     }
 
     private final double shootTimeSeconds = 2;
+    private final double gateDelaySeconds = 2;
 
     public PathChain scorePreload, intakeMiddleSpike, scoreMiddleSpike, scoreToGate, gateIntake, gateToScore, intakeCloseSpike, scoreLastSpike;
 
@@ -112,48 +113,60 @@ public class CloseGate15 extends NextFTCOpMode {
 
     public Command autonomousRoutine() {
         return new SequentialGroup(
+                // Drive to scorePose
                 new ParallelGroup(
                         new FollowPath(scorePreload),
                         Flywheel.INSTANCE.firingSpeed
                 ),
+
                 shootArtifacts(),
-                new ParallelGroup(
-                        Intake.INSTANCE.intakeArtifacts,
-                        new FollowPath(intakeMiddleSpike)
-                ),
-                new ParallelGroup(
-                        Intake.INSTANCE.stopIntake,
-                        new FollowPath(scoreMiddleSpike)
-                ),
+
+                // Intake Middle Spike
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(intakeMiddleSpike),
+
+                // Drive to scorePose
+                Intake.INSTANCE.stopIntake,
+                new FollowPath(scoreMiddleSpike),
+
                 shootArtifacts(),
+
+                // Open gate
                 new FollowPath(scoreToGate),
-                new ParallelGroup(
-                        Intake.INSTANCE.intakeArtifacts,
-                        new FollowPath(gateIntake)
-                ),
-                new ParallelGroup(
-                        Intake.INSTANCE.stopIntake,
-                        new FollowPath(gateToScore)
-                ),
+
+                // Gate intake
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(gateIntake),
+                new Delay(gateDelaySeconds),
+
+                // Drive to scorePose
+                Intake.INSTANCE.stopIntake,
+                new FollowPath(gateToScore),
+
                 shootArtifacts(),
+
+                // Open gate
                 new FollowPath(scoreToGate),
-                new ParallelGroup(
-                        Intake.INSTANCE.intakeArtifacts,
-                        new FollowPath(gateIntake)
-                ),
-                new ParallelGroup(
-                        Intake.INSTANCE.stopIntake,
-                        new FollowPath(gateToScore)
-                ),
+
+                // Gate intake
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(gateIntake),
+                new Delay(gateDelaySeconds),
+
+                // Drive to scorePose
+                Intake.INSTANCE.stopIntake,
+                new FollowPath(gateToScore),
+
                 shootArtifacts(),
-                new ParallelGroup(
-                        Intake.INSTANCE.intakeArtifacts,
-                        new FollowPath(intakeCloseSpike)
-                ),
-                new ParallelGroup(
-                        Intake.INSTANCE.stopIntake,
-                        new FollowPath(scoreLastSpike)
-                ),
+
+                // Intake Close Spike
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(intakeCloseSpike),
+
+                // Drive to lastPose (off of LAUNCH line)
+                Intake.INSTANCE.stopIntake,
+                new FollowPath(scoreLastSpike),
+
                 shootArtifacts()
         );
     }
