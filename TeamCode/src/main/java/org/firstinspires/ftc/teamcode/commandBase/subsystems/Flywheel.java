@@ -19,7 +19,6 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.MotorGroup;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 
@@ -57,7 +56,7 @@ public class Flywheel implements Subsystem {
             .basicFF(shooterFF)
             .build();
 
-    public Command lowSpeed = new InstantCommand(() -> spinFlywheel = !spinFlywheel);
+    public Command toggleOnOff = new InstantCommand(() -> spinFlywheel = !spinFlywheel);
     public Command firingSpeed = new InstantCommand(() -> shootArtifacts = !shootArtifacts);
 
     public void periodic() {

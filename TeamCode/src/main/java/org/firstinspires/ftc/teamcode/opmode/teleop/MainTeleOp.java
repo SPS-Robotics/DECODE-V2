@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -42,7 +45,7 @@ public class MainTeleOp extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
+        follower().setPose(RobotState.AUTO_END_POSE);
         Gamepads.gamepad1().rightStickX();
     }
 
@@ -87,7 +90,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().leftBumper()
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(Flywheel.INSTANCE.firingSpeed)
-                .whenBecomesFalse(Flywheel.INSTANCE.lowSpeed);
+                .whenBecomesFalse(Flywheel.INSTANCE.toggleOnOff);
 
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(new ParallelGroup(
@@ -98,11 +101,16 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate,
                         Intake.INSTANCE.stopIntake
                 ));
+
+        Gamepads.gamepad2().triangle()
+                .whenBecomesTrue(new InstantCommand(() ->
+                        follower().setPose(RobotState.LOADING_ZONE)
+                ));
     }
 
     @Override
     public void onUpdate() {
-        telemetry.addData("Robot Pose", PedroComponent.follower().getPose());
+        telemetry.addData("Robot Pose", follower().getPose());
     }
     @Override
     public void onStop() { }

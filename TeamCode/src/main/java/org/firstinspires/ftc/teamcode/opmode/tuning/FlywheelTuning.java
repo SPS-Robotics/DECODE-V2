@@ -50,8 +50,6 @@ public class FlywheelTuning extends NextFTCOpMode {
     public void onInit() {
         PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
         Gamepads.gamepad1().rightStickX();
-
-
     }
 
     @Override
