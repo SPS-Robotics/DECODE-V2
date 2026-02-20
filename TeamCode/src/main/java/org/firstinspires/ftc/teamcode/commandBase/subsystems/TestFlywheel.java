@@ -26,7 +26,7 @@ public class TestFlywheel implements Subsystem {
             new MotorEx("flywheelMotor2").reversed().floatMode()
     );
 
-    private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
+    //private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     double power = 0;
     boolean spinFlywheel = false;
@@ -36,6 +36,6 @@ public class TestFlywheel implements Subsystem {
 
     public void periodic() {
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
-        ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
+        //ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
     }
 }
