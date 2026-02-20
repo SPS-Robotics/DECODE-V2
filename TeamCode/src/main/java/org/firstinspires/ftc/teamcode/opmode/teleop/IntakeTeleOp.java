@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.commandBase.subsystems.TestFlywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -63,8 +64,7 @@ public class IntakeTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Intake.INSTANCE.stopIntake);
 
         Gamepads.gamepad1().cross()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(TestFlywheel.INSTANCE.turnFlywheelOn)
-                .whenBecomesFalse(TestFlywheel.INSTANCE.turnFlywheelOff);
+                .whenBecomesTrue(new InstantCommand(() -> TestFlywheel.INSTANCE.flywheelMotors.setPower(1)))
+                .whenBecomesFalse(new InstantCommand(() -> TestFlywheel.INSTANCE.flywheelMotors.setPower(0)));
     }
 }

@@ -20,7 +20,7 @@ public class TestFlywheel implements Subsystem {
     public static final TestFlywheel INSTANCE = new TestFlywheel();
     private TestFlywheel() { }
 
-    private final MotorGroup flywheelMotors = new MotorGroup(
+    public MotorGroup flywheelMotors = new MotorGroup(
             new MotorEx("flywheelMotor1").floatMode(),
             new MotorEx("flywheelMotor2").reversed().floatMode()
     );
