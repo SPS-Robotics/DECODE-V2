@@ -13,14 +13,14 @@ public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
     private Intake() { }
 
-    private final MotorEx intakeMotor = new MotorEx("intakeMotor").brakeMode();
+    private final MotorEx intakeMotor = new MotorEx("intakeMotor").brakeMode().reversed();
 
-    private final ServoEx gateServo = new ServoEx("gateServo");
+    //private final ServoEx gateServo = new ServoEx("gateServo");
 
     public Command intakeArtifacts = new SetPower(intakeMotor, Constants.Intake.INTAKE_POWER).requires(intakeMotor);
     public Command outtakeArtifacts = new SetPower(intakeMotor, -Constants.Intake.INTAKE_POWER).requires(intakeMotor);
     public Command stopIntake = new SetPower(intakeMotor, 0).requires(intakeMotor);
 
-    public Command openGate = new SetPosition(gateServo, Constants.Intake.GATE_OPEN).requires(gateServo);
-    public Command closeGate = new SetPosition(gateServo, Constants.Intake.GATE_CLOSE).requires(gateServo);
+    //public Command openGate = new SetPosition(gateServo, Constants.Intake.GATE_OPEN).requires(gateServo);
+    //public Command closeGate = new SetPosition(gateServo, Constants.Intake.GATE_CLOSE).requires(gateServo);
 }

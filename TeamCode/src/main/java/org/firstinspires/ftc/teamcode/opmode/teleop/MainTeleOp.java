@@ -22,6 +22,7 @@ import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
+/*
 @TeleOp(name = "TeleOp")
 public class MainTeleOp extends NextFTCOpMode {
     public MainTeleOp() {
@@ -58,7 +59,8 @@ public class MainTeleOp extends NextFTCOpMode {
                 Gamepads.gamepad1().rightStickX(),
                 false
         );
-        */
+
+
 
         DriverControlledCommand driverControlled = new MecanumDriverControlled(
                 frontLeft,
@@ -107,3 +109,5 @@ public class MainTeleOp extends NextFTCOpMode {
     @Override
     public void onStop() { }
 }
+
+*/
