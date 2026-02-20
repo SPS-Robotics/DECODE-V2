@@ -14,13 +14,14 @@ import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
+import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
 public class TestFlywheel implements Subsystem {
     public static final TestFlywheel INSTANCE = new TestFlywheel();
     private TestFlywheel() { }
 
-    public MotorGroup flywheelMotors = new MotorGroup(
+    private final MotorGroup flywheelMotors = new MotorGroup(
             new MotorEx("flywheelMotor1").floatMode(),
             new MotorEx("flywheelMotor2").reversed().floatMode()
     );
@@ -30,15 +31,10 @@ public class TestFlywheel implements Subsystem {
     double power = 0;
     boolean spinFlywheel = false;
 
-    public Command turnFlywheelOn = new InstantCommand(() -> spinFlywheel = true);
-    public Command turnFlywheelOff = new InstantCommand(() -> spinFlywheel = false);
+    public Command turnFlywheelOn = new SetPower(flywheelMotors, 1);
+    public Command turnFlywheelOff = new SetPower(flywheelMotors, 0);
 
     public void periodic() {
-        if (spinFlywheel) power = 1;
-        else power = 0;
-
-        flywheelMotors.setPower(power);
-
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
     }
