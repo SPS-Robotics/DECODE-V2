@@ -31,8 +31,8 @@ public class TestFlywheel implements Subsystem {
     double power = 0;
     boolean spinFlywheel = false;
 
-    public Command turnFlywheelOn = new SetPower(flywheelMotors, 1);
-    public Command turnFlywheelOff = new SetPower(flywheelMotors, 0);
+    public Command turnFlywheelOn = new SetPower(flywheelMotors, 1).requires(flywheelMotors);
+    public Command turnFlywheelOff = new SetPower(flywheelMotors, 0).requires(flywheelMotors);
 
     public void periodic() {
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
