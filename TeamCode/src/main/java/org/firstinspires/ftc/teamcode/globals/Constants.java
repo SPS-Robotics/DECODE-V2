@@ -6,11 +6,11 @@ import com.pedropathing.geometry.Pose;
 @Configurable
 public class Constants {
     public static class Turret {
-        public static double ticksPerRevolution = 8192; // Motor Encoder Calculation Required
-        public static double pulleyRatio = 1; // Large Pulley Teeth / Small Pulley Teeth
+        public static double ticksPerRevolution = 28.0 * 18.9; // Motor Encoder Calculation Required
+        public static double pulleyRatio = 107.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -2000;
-        public static double MAX_TICKS = 2000;
+        public static double MIN_TICKS = -300;
+        public static double MAX_TICKS = 300;
 
         public static double kP = 0;
         public static double kI = 0;
