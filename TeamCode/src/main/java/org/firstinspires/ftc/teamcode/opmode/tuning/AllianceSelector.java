@@ -25,9 +25,11 @@ public class AllianceSelector extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad1.cross || gamepad2.cross || gamepad1.triangle || gamepad2.triangle) {
                 ALLIANCE_COLOR = RobotState.AllianceColor.BLUE;
+                RobotState.recalculatePoses();
             }
             else if (gamepad1.circle || gamepad2.circle || gamepad1.square || gamepad2.square) {
                 ALLIANCE_COLOR = RobotState.AllianceColor.RED;
+                RobotState.recalculatePoses();
             }
 
             telemetry.addData("Cross / Triangle", "Blue");

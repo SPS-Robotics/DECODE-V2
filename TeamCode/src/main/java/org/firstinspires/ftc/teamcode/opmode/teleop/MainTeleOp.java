@@ -1,17 +1,24 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.TuningFlywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.Drawing;
 
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
@@ -22,55 +29,35 @@ import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
-/*
-@TeleOp(name = "TeleOp")
+
+@TeleOp(name = "TeleOp Testing")
 public class MainTeleOp extends NextFTCOpMode {
     public MainTeleOp() {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
     }
-
-    private final MotorEx frontLeft = new MotorEx("frontLeft").brakeMode().zeroed().reversed();
-    private final MotorEx frontRight = new MotorEx("frontRight").brakeMode().zeroed();
-    private final MotorEx backLeft = new MotorEx("backLeft").brakeMode().zeroed().reversed();
-    private final MotorEx backRight = new MotorEx("backRight").brakeMode().zeroed();
-
-    private final IMUEx imu = new IMUEx("imu", Direction.LEFT, Direction.UP).zeroed();
-
     @Override
     public void onInit() {
         PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
-        Gamepads.gamepad1().rightStickX();
     }
 
     @Override
-    public void onWaitForStart() { }
+    public void onWaitForStart() {
+        Gamepads.gamepad1().rightStickX();
+        PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
+    }
 
     @Override
     public void onStartButtonPressed() {
-        /*
         Command driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                false
-        );
-
-
-
-        DriverControlledCommand driverControlled = new MecanumDriverControlled(
-                frontLeft,
-                frontRight,
-                backLeft,
-                backRight,
-                Gamepads.gamepad1().leftStickY(),
+                Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().leftStickX().negate(),
                 Gamepads.gamepad1().rightStickX().negate(),
-                new FieldCentric(imu)
+                true
         );
 
         driverControlled.schedule();
@@ -86,6 +73,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().triangle()
                 .whenBecomesTrue(Turret.INSTANCE.toggleTracking);
 
+        /*
         Gamepads.gamepad1().leftBumper()
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(Flywheel.INSTANCE.firingSpeed)
@@ -100,14 +88,27 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate,
                         Intake.INSTANCE.stopIntake
                 ));
+
+         */
     }
 
     @Override
     public void onUpdate() {
         telemetry.addData("Robot Pose", PedroComponent.follower().getPose());
+        telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
+        telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.update();
+        drawOnlyCurrent();
     }
     @Override
     public void onStop() { }
-}
 
-*/
+    public static void drawOnlyCurrent() {
+        try {
+            Drawing.drawRobot(PedroComponent.follower().getPose());
+            Drawing.sendPacket();
+        } catch (Exception e) {
+            throw new RuntimeException("Drawing failed " + e);
+        }
+    }
+}

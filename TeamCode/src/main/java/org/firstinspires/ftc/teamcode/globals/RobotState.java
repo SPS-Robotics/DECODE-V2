@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.globals;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 
+@Configurable
 public class RobotState {
     public enum AllianceColor {
         BLUE(-1), RED(1);
@@ -18,8 +20,13 @@ public class RobotState {
     }
 
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
-    public static Pose AUTO_END_POSE = new Pose();
+    public static Pose AUTO_END_POSE = new Pose(72, 72, Math.toRadians(90));
 
     public static Pose GOAL_POSE = new Pose((72 + (65*ALLIANCE_COLOR.getMultiplier())), 140); // tune and then do shooter and hood tuning.
     public static Pose LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0); // depends on robot centre - tune later.
+
+    public static void recalculatePoses() {
+        GOAL_POSE = new Pose((72 + (65*ALLIANCE_COLOR.getMultiplier())), 140);
+        LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0);
+    }
 }

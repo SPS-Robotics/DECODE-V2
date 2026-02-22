@@ -34,21 +34,21 @@ public class TuningFlywheel implements Subsystem {
             new MotorEx("flywheelMotor2").reversed().floatMode()
     );
 
-    private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
-
-    public static PIDCoefficients shooterPID = new PIDCoefficients(0, 0, 0);
-    public static BasicFeedforwardParameters shooterFF = new BasicFeedforwardParameters(0, 0, 0);
+    //private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     ControlSystem controller = ControlSystem.builder()
-            .velPid(shooterPID)
-            .basicFF(shooterFF)
+            .velPid(0,0,0)
+            .basicFF(0.00041,0,0.05)
             .build();
 
-    double flywheelTarget = 0;
+    double flywheelTarget = 2000;
+    /*
 
     public Command moveHoodByValue(double increment) {
         return new SetPosition(hoodServo,hoodServo.getPosition()+increment);
     }
+
+     */
 
     public Command moveFlywheelByValue(double increment) {
         return new InstantCommand(() -> {
@@ -57,15 +57,22 @@ public class TuningFlywheel implements Subsystem {
         });
     }
 
+    private boolean shoot = false;
+    private double power;
+
+    public Command turnOn = new InstantCommand(() -> shoot = true);
+    public Command turnOff = new InstantCommand(() -> shoot = false);
+
     public void periodic() {
-        flywheelMotors.setPower(
-                controller.calculate(
-                        flywheelMotors.getState()
-                )
-        );
+        controller.setGoal(new KineticState(0, flywheelTarget, 0));
+        if (shoot) power = controller.calculate(flywheelMotors.getState());
+        else power = 0;
+
+        flywheelMotors.setPower(power);
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Target", flywheelTarget);
-        ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
+        ActiveOpMode.telemetry().addData("Applied Power", power);
+        //ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
     }
 }
