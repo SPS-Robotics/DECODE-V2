@@ -37,28 +37,23 @@ public class Flywheel implements Subsystem {
 
     private final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(10.0, 11.0, 12.0, 13.0), // distance
-            Arrays.asList(0.1, 0.2, 0.3, 0.4), // shooter velocity
-            true
+            Arrays.asList(0.1, 0.2, 0.3, 0.4) // shooter velocity
     );
     private final InterpLUT hoodLUT = new InterpLUT(
             Arrays.asList(10.0, 11.0, 12.0, 13.0), // distance
-            Arrays.asList(0.1, 0.2, 0.3, 0.4), // hood position
-            true
+            Arrays.asList(0.1, 0.2, 0.3, 0.4) // hood position
     );
 
-    public static PIDCoefficients shooterPID = new PIDCoefficients(Constants.Flywheel.kP, Constants.Flywheel.kI, Constants.Flywheel.kD);
-    public static BasicFeedforwardParameters shooterFF = new BasicFeedforwardParameters(Constants.Flywheel.kV, Constants.Flywheel.kA, Constants.Flywheel.kS);
-
-    private boolean spinFlywheel = true;
-    private boolean shootArtifacts = false;
+    private boolean spinFlywheel = false;
+    double power;
 
     ControlSystem controller = ControlSystem.builder()
-            .velPid(shooterPID)
-            .basicFF(shooterFF)
+            .velPid(Constants.Flywheel.kP, Constants.Flywheel.kI, Constants.Flywheel.kD)
+            .basicFF(Constants.Flywheel.kV, Constants.Flywheel.kA, Constants.Flywheel.kS)
             .build();
 
-    public Command lowSpeed = new InstantCommand(() -> spinFlywheel = !spinFlywheel);
-    public Command firingSpeed = new InstantCommand(() -> shootArtifacts = !shootArtifacts);
+    public Command turnFlywheelOn = new InstantCommand(() -> spinFlywheel = true);
+    public Command turnFlywheelOff = new InstantCommand(() -> spinFlywheel = false);
 
     public void periodic() {
         Pose robotPose = PedroComponent.follower().getPose();
@@ -66,18 +61,12 @@ public class Flywheel implements Subsystem {
         double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
 
         hoodServo.setPosition(hoodLUT.get(distance));
+        controller.setGoal(new KineticState(0, velocityLUT.get(distance), 0));
 
-        if (spinFlywheel && shootArtifacts) controller.setGoal(new KineticState(0, velocityLUT.get(distance), 0));
-        if (spinFlywheel && !shootArtifacts) controller.setGoal(new KineticState(0, Constants.Flywheel.IDLE_VELOCITY, 0));
+        if (!spinFlywheel) power = 0;
+        else power = controller.calculate(flywheelMotors.getState());
 
-        if (!spinFlywheel) flywheelMotors.setPower(0);
-        else {
-            flywheelMotors.setPower(
-                    controller.calculate(
-                            flywheelMotors.getState()
-                    )
-            );
-        }
+        flywheelMotors.setPower(power);
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Error", controller.getGoal().getVelocity() - flywheelMotors.getVelocity());

@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
 
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
+import com.pedropathing.ftc.drivetrains.Mecanum;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
 
@@ -30,37 +34,57 @@ import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 
-@TeleOp(name = "TeleOp Testing")
+@TeleOp(name = "TeleOp")
 public class MainTeleOp extends NextFTCOpMode {
     public MainTeleOp() {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE, Flywheel.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
     }
     @Override
-    public void onInit() {
-        PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
-    }
+    public void onInit() { }
 
     @Override
     public void onWaitForStart() {
         Gamepads.gamepad1().rightStickX();
         PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
+        Pose robotPose = PedroComponent.follower().getPose();
+        telemetry.addData("Robot X", robotPose.getX());
+        telemetry.addData("Robot Y", robotPose.getY());
+        telemetry.addData("Robot Heading", robotPose.getHeading());
+        telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
+        telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.update();
     }
 
     @Override
     public void onStartButtonPressed() {
-        Command driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().leftStickY().negate(),
-                Gamepads.gamepad1().leftStickX().negate(),
-                Gamepads.gamepad1().rightStickX().negate(),
-                true
-        );
+        Command driverControlled;
+        if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+            driverControlled = new PedroDriverControlled(
+                    Gamepads.gamepad1().leftStickY(),
+                    Gamepads.gamepad1().leftStickX(),
+                    Gamepads.gamepad1().rightStickX().negate(),
+                    false
+            );
+        }
+        else {
+            driverControlled = new PedroDriverControlled(
+                    Gamepads.gamepad1().leftStickY().negate(),
+                    Gamepads.gamepad1().leftStickX().negate(),
+                    Gamepads.gamepad1().rightStickX().negate(),
+                    false
+            );
+        }
 
         driverControlled.schedule();
+
+        Flywheel.INSTANCE.turnFlywheelOn.schedule();
+        Turret.INSTANCE.enableTracking.schedule();
+        Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -71,13 +95,14 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Intake.INSTANCE.stopIntake);
 
         Gamepads.gamepad1().triangle()
-                .whenBecomesTrue(Turret.INSTANCE.toggleTracking);
-
-        /*
-        Gamepads.gamepad1().leftBumper()
                 .toggleOnBecomesTrue()
-                .whenBecomesTrue(Flywheel.INSTANCE.firingSpeed)
-                .whenBecomesFalse(Flywheel.INSTANCE.lowSpeed);
+                .whenBecomesTrue(Turret.INSTANCE.enableTracking)
+                .whenBecomesFalse(Turret.INSTANCE.disableTracking);
+
+        Gamepads.gamepad1().circle()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Flywheel.INSTANCE.turnFlywheelOn)
+                .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(new ParallelGroup(
@@ -88,18 +113,20 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate,
                         Intake.INSTANCE.stopIntake
                 ));
-
-         */
     }
 
     @Override
     public void onUpdate() {
-        telemetry.addData("Robot Pose", PedroComponent.follower().getPose());
+        Pose robotPose = follower().getPose();
+        telemetry.addData("Robot X", robotPose.getX());
+        telemetry.addData("Robot Y", robotPose.getY());
+        telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
         telemetry.update();
         drawOnlyCurrent();
     }
+
     @Override
     public void onStop() { }
 

@@ -25,6 +25,8 @@ public class RobotState {
     public static Pose GOAL_POSE = new Pose((72 + (65*ALLIANCE_COLOR.getMultiplier())), 140); // tune and then do shooter and hood tuning.
     public static Pose LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0); // depends on robot centre - tune later.
 
+    public static double TURRET_END_POS = 0;
+
     public static void recalculatePoses() {
         GOAL_POSE = new Pose((72 + (65*ALLIANCE_COLOR.getMultiplier())), 140);
         LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0);

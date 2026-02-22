@@ -25,29 +25,29 @@ public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     private Turret() { }
     ControlSystem controller = ControlSystem.builder()
-            .posPid(0.008, 0, 0.0001)
+            .posPid(Constants.Turret.kP, Constants.Turret.kI, Constants.Turret.kD)
             .build();
 
     private final MotorEx turretRotator = new MotorEx("turretRotator").zeroed().brakeMode();
-    private boolean turretTracking = true;
+    private boolean turretTracking = false;
 
-    public Command toggleTracking = new InstantCommand(() -> turretTracking = !turretTracking);
-
-
+    public double getTurretPosition() {
+        return turretRotator.getCurrentPosition();
+    }
     public double calculateTurretPosition() {
         Pose robotPose = PedroComponent.follower().getPose();
         double turretAngleRadians = MathUtils.calculateAngleToPose(robotPose, RobotState.GOAL_POSE);
 
-        double tickOffset = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
-        ActiveOpMode.telemetry().addData("calculatedTickOffset", tickOffset);
+        double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
+        ActiveOpMode.telemetry().addData("calculatedTickOffset", goalLocation);
 
-        return MathUtils.clampValue(tickOffset, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);
+        return MathUtils.clampValue(goalLocation, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);
     }
 
-    @Override
-    public void initialize() {
-        turretRotator.zero();
-        turretRotator.setCurrentPosition(0);
+    public Command enableTracking = new InstantCommand(() -> turretTracking = true);
+    public Command disableTracking = new InstantCommand(() -> turretTracking = false);
+    public Command setTurretPosition(double pos) {
+        return new InstantCommand(() -> turretRotator.setCurrentPosition(pos));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Turret implements Subsystem {
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
 
-        double power = 0;
+        double power;
         if (!turretTracking) power = 0;
         else power = controller.calculate(turretRotator.getState());
 

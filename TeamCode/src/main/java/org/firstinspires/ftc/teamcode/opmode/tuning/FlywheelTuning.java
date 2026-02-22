@@ -24,7 +24,7 @@ import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
-@TeleOp(name="Flywheel Tuner")
+@TeleOp(name="TUNING - Flywheel")
 public class FlywheelTuning extends NextFTCOpMode {
     public FlywheelTuning() {
         addComponents(
@@ -36,18 +36,14 @@ public class FlywheelTuning extends NextFTCOpMode {
     }
 
 
-    private final double[] hoodIncrements = {0.05, 0.01, 0.001};
-    private final double[] flywheelIncrements = {50, 10, 1};
+    double[] hoodIncrements = {0.05, 0.01, 0.001};
+    double[] flywheelIncrements = {50, 10, 1};
 
-    private int hoodIncrementIndex = 0;
-    private int flywheelIncrementIndex = 0;
+    int hoodIncrementIndex = 0;
+    int flywheelIncrementIndex = 0;
 
     @Override
-    public void onInit() {
-
-
-
-    }
+    public void onInit() { }
 
     @Override
     public void onWaitForStart() {
@@ -57,33 +53,39 @@ public class FlywheelTuning extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-
-        Command driverControlled = new PedroDriverControlled(
-                Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                false
-        );
-
+        Command driverControlled;
+        if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+            driverControlled = new PedroDriverControlled(
+                    Gamepads.gamepad1().leftStickY(),
+                    Gamepads.gamepad1().leftStickX(),
+                    Gamepads.gamepad1().rightStickX().negate(),
+                    false
+            );
+        }
+        else {
+            driverControlled = new PedroDriverControlled(
+                    Gamepads.gamepad1().leftStickY().negate(),
+                    Gamepads.gamepad1().leftStickX().negate(),
+                    Gamepads.gamepad1().rightStickX().negate(),
+                    false
+            );
+        }
 
         driverControlled.schedule();
-/*
+
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(TuningFlywheel.INSTANCE.moveHoodByValue(hoodIncrements[hoodIncrementIndex]));
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(TuningFlywheel.INSTANCE.moveHoodByValue(-hoodIncrements[hoodIncrementIndex]));
-
-
- */
 
         Gamepads.gamepad1().dpadRight()
                 .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(flywheelIncrements[flywheelIncrementIndex]));
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(-flywheelIncrements[flywheelIncrementIndex]));
 
-        Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
-                        .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
-                                .whenBecomesFalse(Intake.INSTANCE.stopIntake);
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
+                .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
+                .whenBecomesFalse(Intake.INSTANCE.stopIntake);
 
         Gamepads.gamepad1().cross()
                 .toggleOnBecomesTrue()

@@ -12,9 +12,9 @@ public class Constants {
         public static double MIN_TICKS = -1000;
         public static double MAX_TICKS = 1000;
 
-        public static double kP = 0;
+        public static double kP = 0.008;
         public static double kI = 0;
-        public static double kD = 0;
+        public static double kD = 0.0001;
     }
 
     public static class Intake {
@@ -29,9 +29,9 @@ public class Constants {
         public static double kI = 0;
         public static double kD = 0;
 
-        public static double kV = 0;
+        public static double kV = 0.00041;
         public static double kA = 0;
-        public static double kS = 0;
+        public static double kS = 0.05;
 
         public static double IDLE_VELOCITY = 100;
     }

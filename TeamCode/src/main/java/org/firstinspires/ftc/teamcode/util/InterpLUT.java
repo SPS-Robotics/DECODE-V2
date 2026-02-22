@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,28 +12,17 @@ import java.util.List;
  * @author Arush - 23511 (for the additional constructor, chained calls, and safeMode)
  */
 public class InterpLUT {
-
     private List<Double> mX = new ArrayList<>();
     private List<Double> mY = new ArrayList<>();
     private List<Double> mM = new ArrayList<>();
-    private boolean safeMode; // prevents an error from being thrown if a value outside of bounds is requested
 
     private InterpLUT(List<Double> x, List<Double> y, List<Double> m) {
-        this(x, y, m, false);
-    }
-
-    private InterpLUT(List<Double> x, List<Double> y, List<Double> m, boolean safeMode) {
         mX = x;
         mY = y;
         mM = m;
-        this.safeMode = safeMode;
     }
 
     public InterpLUT(List<Double> input, List<Double> output) {
-        this(input, output, false);
-    }
-
-    public InterpLUT(List<Double> input, List<Double> output, boolean safeMode) {
         if (input == null || output == null || input.size() != output.size() || input.size() < 2) {
             throw new IllegalArgumentException("There must be at least two control "
                     + "points and the arrays must be of equal length.");
@@ -42,11 +33,9 @@ public class InterpLUT {
             mY.add(output.get(i));
         }
 
-        this.safeMode = safeMode;
     }
 
     public InterpLUT() {
-        this.safeMode = false;
     }
 
     /**
@@ -139,21 +128,13 @@ public class InterpLUT {
             return input;
         }
 
-        // If safeMode is enabled/true (false by default), returns the first/last value in the list
+        // Returns the min/max y-value if the value requested is out of bounds
         if (input <= mX.get(0)) {
-            if (safeMode) {
-                return mY.get(0);
-            } else {
-                throw new IllegalArgumentException("User requested value outside of bounds of LUT. Bounds are: " + mX.get(0).toString() + " to " + mX.get(n - 1).toString() + ". Value provided was: " + input);
-            }
+            return mY.get(0);
         }
 
         if (input >= mX.get(n - 1)) {
-            if (safeMode) {
-                return mY.get(n - 1);
-            } else {
-                throw new IllegalArgumentException("User requested value outside of bounds of LUT. Bounds are: " + mX.get(0).toString() + " to " + mX.get(n - 1).toString() + ". Value provided was: " + input);
-            }
+            return mY.get(n - 1);
         }
 
         // Find the index 'i' of the last point with smaller X.
@@ -173,16 +154,8 @@ public class InterpLUT {
                 + (mY.get(i + 1) * (3 - 2 * t) + h * mM.get(i + 1) * (t - 1)) * t * t;
     }
 
-    public InterpLUT setSafeMode(boolean safeMode) {
-        this.safeMode = safeMode;
-        return this;
-    }
-
-    public boolean getSafeMode() {
-        return this.safeMode;
-    }
-
     // For debugging.
+    @NonNull
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
