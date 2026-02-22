@@ -37,7 +37,7 @@ public class Flywheel implements Subsystem {
 
     private final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(10.0, 11.0, 12.0, 13.0), // distance
-            Arrays.asList(0.1, 0.2, 0.3, 0.4) // shooter velocity
+            Arrays.asList(1600.0, 0.2, 0.3, 0.4) // shooter velocity
     );
     private final InterpLUT hoodLUT = new InterpLUT(
             Arrays.asList(10.0, 11.0, 12.0, 13.0), // distance
