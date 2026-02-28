@@ -37,7 +37,7 @@ public class CloseGate15 extends NextFTCOpMode {
         );
     }
 
-    private Pose startPose = new Pose(21, 125, Math.toRadians(324));
+    private Pose startPose = new Pose(17.5, 120, Math.toRadians(324));
     private Pose scorePose = new Pose(50, 83);
     private Pose closeSpikePose = new Pose(23.2, 84);
     private Pose middleSpikePose = new Pose(18.8, 59.9);

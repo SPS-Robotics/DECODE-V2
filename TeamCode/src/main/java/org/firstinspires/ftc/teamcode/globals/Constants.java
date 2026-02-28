@@ -33,6 +33,14 @@ public class Constants {
         public static double kA = 0;
         public static double kS = 0.05;
 
-        public static double IDLE_VELOCITY = 100;
+        public static double IDLE_VELOCITY = 1000;
+    }
+
+    public static class Lift {
+        public static double LEFT_SERVO_ENGAGED = 0;
+        public static double RIGHT_SERVO_ENGAGED = 0;
+
+        public static double LEFT_SERVO_DISENGAGED = 1;
+        public static double RIGHT_SERVO_DISENGAGED = 1;
     }
 }

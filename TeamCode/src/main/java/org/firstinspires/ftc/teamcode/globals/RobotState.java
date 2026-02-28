@@ -20,7 +20,7 @@ public class RobotState {
     }
 
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
-    public static Pose AUTO_END_POSE = new Pose(72, 72, Math.toRadians(90));
+    public static Pose AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
 
     public static Pose GOAL_POSE = new Pose((72 + (65*ALLIANCE_COLOR.getMultiplier())), 140); // tune and then do shooter and hood tuning.
     public static Pose LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0); // depends on robot centre - tune later.

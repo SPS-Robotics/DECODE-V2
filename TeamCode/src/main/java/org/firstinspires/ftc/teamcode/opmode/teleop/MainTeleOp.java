@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.TuningFlywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
@@ -82,9 +83,10 @@ public class MainTeleOp extends NextFTCOpMode {
 
         driverControlled.schedule();
 
-        Flywheel.INSTANCE.turnFlywheelOn.schedule();
-        Turret.INSTANCE.enableTracking.schedule();
-        Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
+        //Flywheel.INSTANCE.turnFlywheelOn.schedule();
+        //Turret.INSTANCE.enableTracking.schedule();
+        //Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
+        Lift.INSTANCE.disengageLift.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -113,6 +115,11 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate,
                         Intake.INSTANCE.stopIntake
                 ));
+
+        Gamepads.gamepad1().options()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Lift.INSTANCE.engageLift)
+                .whenBecomesFalse(Lift.INSTANCE.disengageLift);
     }
 
     @Override

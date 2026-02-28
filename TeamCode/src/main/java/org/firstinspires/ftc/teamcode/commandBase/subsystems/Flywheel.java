@@ -60,11 +60,12 @@ public class Flywheel implements Subsystem {
 
         double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
 
-        hoodServo.setPosition(hoodLUT.get(distance));
+        //hoodServo.setPosition(hoodLUT.get(distance));
         controller.setGoal(new KineticState(0, velocityLUT.get(distance), 0));
 
         if (!spinFlywheel) power = 0;
-        else power = controller.calculate(flywheelMotors.getState());
+        //else power = controller.calculate(flywheelMotors.getState());
+        else power = 1;
 
         flywheelMotors.setPower(power);
 
