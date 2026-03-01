@@ -24,7 +24,7 @@ public class Intake implements Subsystem {
     private final ServoEx gateServo = new ServoEx("gateServo");
 
     public Command intakeArtifacts = new SetPower(intakeMotor, Constants.Intake.INTAKE_POWER).requires(intakeMotor);
-    public Command outtakeArtifacts = new SetPower(intakeMotor, -Constants.Intake.INTAKE_POWER).requires(intakeMotor);
+    public Command outtakeArtifacts = new SetPower(intakeMotor, Constants.Intake.OUTTAKE_POWER).requires(intakeMotor);
     public Command stopIntake = new SetPower(intakeMotor, 0).requires(intakeMotor);
 
     public Command openGate = new SetPosition(gateServo, Constants.Intake.GATE_OPEN).requires(gateServo);

@@ -19,6 +19,7 @@ public class Constants {
 
     public static class Intake {
         public static double INTAKE_POWER = 1;
+        public static double OUTTAKE_POWER = -0.2;
 
         public static double GATE_OPEN = 0;
         public static double GATE_CLOSE = 1;
