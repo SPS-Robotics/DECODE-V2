@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.util.Drawing;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -116,10 +118,13 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.stopIntake
                 ));
 
-        Gamepads.gamepad1().options()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(Lift.INSTANCE.engageLift)
-                .whenBecomesFalse(Lift.INSTANCE.disengageLift);
+        Gamepads.gamepad2().triangle()
+                .whenBecomesTrue(new SequentialGroup(
+                        new InstantCommand(driverControlled::cancel),
+                        Lift.INSTANCE.engageLift,
+                        Lift.INSTANCE.startLift
+                ))
+                .whenBecomesFalse(Lift.INSTANCE.stopLift);
     }
 
     @Override

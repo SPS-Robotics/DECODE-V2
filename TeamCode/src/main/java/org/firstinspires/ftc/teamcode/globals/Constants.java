@@ -42,5 +42,10 @@ public class Constants {
 
         public static double LEFT_SERVO_DISENGAGED = 1;
         public static double RIGHT_SERVO_DISENGAGED = 1;
+
+        public static double ENGAGE_TIME = 0.3;
+        public static double ENGAGING_POWER = 0.1;
+
+        public static double LIFT_POWER = 0.8;
     }
 }
