@@ -39,14 +39,14 @@ public class Constants {
 
     public static class Lift {
         public static double LEFT_SERVO_ENGAGED = 0;
-        public static double RIGHT_SERVO_ENGAGED = 0;
+        public static double RIGHT_SERVO_ENGAGED = 1;
 
         public static double LEFT_SERVO_DISENGAGED = 1;
-        public static double RIGHT_SERVO_DISENGAGED = 1;
+        public static double RIGHT_SERVO_DISENGAGED = 0;
 
         public static double ENGAGE_TIME = 0.3;
-        public static double ENGAGING_POWER = 0.1;
+        public static double ENGAGING_POWER = 0.2;
 
-        public static double LIFT_POWER = 0.8;
+        public static double LIFT_POWER = 1;
     }
 }

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Drawing;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
@@ -118,11 +119,11 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.stopIntake
                 ));
 
-        Gamepads.gamepad2().triangle()
+        Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
+                        new InstantCommand(() -> PedroComponent.follower().breakFollowing()),
                         new InstantCommand(driverControlled::cancel),
-                        Lift.INSTANCE.engageLift,
-                        Lift.INSTANCE.startLift
+                        Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
     }

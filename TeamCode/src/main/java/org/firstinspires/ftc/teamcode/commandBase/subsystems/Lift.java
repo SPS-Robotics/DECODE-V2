@@ -14,26 +14,29 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
+import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
+import dev.nextftc.hardware.powerable.SetPower;
 
 public class Lift implements Subsystem {
     public static final Lift INSTANCE = new Lift();
-    private Lift() { }
+
+    private Lift() {
+    }
 
     private final MotorEx backLeft = new MotorEx("backLeft").brakeMode();
     private final MotorEx backRight = new MotorEx("backRight").brakeMode();
     private final MotorEx frontLeft = new MotorEx("frontLeft").brakeMode().reversed();
     private final MotorEx frontRight = new MotorEx("frontRight").brakeMode().reversed();
+
+    private final MotorGroup backMotors = new MotorGroup(backLeft, backRight);
+
+    private final MotorGroup frontMotors = new MotorGroup(frontLeft, frontRight);
+
     private final ServoEx leftServo = new ServoEx("leftServo");
     private final ServoEx rightServo = new ServoEx("rightServo");
-
-    private enum LiftState {
-        DISENGAGED, ENGAGING, LIFTING, LIFTED
-    };
-
-    LiftState currentLift = LiftState.DISENGAGED;
 
     public Command engageLift = new ParallelGroup(
             new SetPosition(leftServo, Constants.Lift.LEFT_SERVO_ENGAGED),
@@ -45,36 +48,28 @@ public class Lift implements Subsystem {
             new SetPosition(rightServo, Constants.Lift.RIGHT_SERVO_DISENGAGED)
     );
 
-    public Command startLift = new SequentialGroup(
-            new InstantCommand(() -> currentLift = LiftState.ENGAGING),
-            new Delay(Constants.Lift.ENGAGE_TIME),
-            new InstantCommand(() -> currentLift = LiftState.LIFTING)
+    public Command engageClutch = new ParallelGroup(
+            new SetPower(backMotors, Constants.Lift.ENGAGING_POWER),
+            new SetPower(frontMotors, -Constants.Lift.ENGAGING_POWER)
     );
-    public Command stopLift = new InstantCommand(() -> currentLift = LiftState.LIFTED);
+
+    public Command startLift = new ParallelGroup(
+            new SetPower(backMotors, Constants.Lift.LIFT_POWER),
+            new SetPower(frontMotors, -Constants.Lift.LIFT_POWER)
+    );
+
+    public Command stopLift = new ParallelGroup(
+            new SetPower(backMotors, 0),
+            new SetPower(frontMotors, 0)
+    );
+
+    public Command liftRobot = new SequentialGroup(
+            engageLift,
+            engageClutch,
+            new Delay(Constants.Lift.ENGAGE_TIME),
+            startLift
+    );
 
     @Override
-    public void periodic() {
-        if (currentLift == LiftState.ENGAGING) {
-            double power = Constants.Lift.ENGAGING_POWER;
-            backLeft.setPower(power);
-            backRight.setPower(power);
-            frontLeft.setPower(-power);
-            frontRight.setPower(-power);
-        }
-
-        if (currentLift == LiftState.LIFTING) {
-            double power = Constants.Lift.LIFT_POWER;
-            backLeft.setPower(power);
-            backRight.setPower(power);
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-        }
-
-        if (currentLift == LiftState.LIFTED) {
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-        }
-    }
+    public void periodic() { }
 }
