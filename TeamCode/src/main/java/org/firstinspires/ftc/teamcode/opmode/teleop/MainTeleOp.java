@@ -86,10 +86,10 @@ public class MainTeleOp extends NextFTCOpMode {
 
         driverControlled.schedule();
 
-        //Flywheel.INSTANCE.turnFlywheelOn.schedule();
-        //Turret.INSTANCE.enableTracking.schedule();
-        //Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
+        Flywheel.INSTANCE.turnFlywheelOn.schedule();
+        Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
         Lift.INSTANCE.disengageLift.schedule();
+        Turret.INSTANCE.enableTracking.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -119,7 +119,6 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.stopIntake
                 ));
 
-        /*
         Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
                         new InstantCommand(() -> PedroComponent.follower().breakFollowing()),
@@ -127,8 +126,6 @@ public class MainTeleOp extends NextFTCOpMode {
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
-
-         */
     }
 
     @Override
