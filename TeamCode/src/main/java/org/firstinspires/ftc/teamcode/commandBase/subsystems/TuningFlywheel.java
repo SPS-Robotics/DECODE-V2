@@ -34,11 +34,11 @@ public class TuningFlywheel implements Subsystem {
             new MotorEx("flywheelMotor2").reversed().floatMode()
     );
 
-    private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
+    public ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     ControlSystem controller = ControlSystem.builder()
-            .velPid(0,0,0)
-            .basicFF(0.00041,0,0.05)
+            .velPid(0.0008,0,0)
+            .basicFF(0.00051,0,0.06)
             .build();
 
     double power;
@@ -52,16 +52,18 @@ public class TuningFlywheel implements Subsystem {
         });
     }
 
-    public Command moveHoodByValue(double increment) {
-        return new SetPosition(hoodServo, hoodServo.getPosition() + increment);
+    public Command moveHoodByValue(double newPosition) {
+        return new SetPosition(hoodServo, newPosition);
     }
 
     public Command turnOn = new InstantCommand(() -> shoot = true);
     public Command turnOff = new InstantCommand(() -> shoot = false);
 
+    public double hoodPosition = 0.4;
+
     @Override
     public void initialize() {
-        hoodServo.setPosition(0);
+        hoodServo.setPosition(hoodPosition);
         flywheelTarget = 0;
     }
 
@@ -70,6 +72,8 @@ public class TuningFlywheel implements Subsystem {
         controller.setGoal(new KineticState(0, flywheelTarget, 0));
         if (shoot) power = controller.calculate(flywheelMotors.getState());
         else power = 0;
+
+        hoodPosition = hoodServo.getPosition();
 
         flywheelMotors.setPower(power);
 

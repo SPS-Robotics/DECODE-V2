@@ -119,8 +119,9 @@ public class CloseGate15 extends NextFTCOpMode {
                         Flywheel.INSTANCE.turnFlywheelOn
                 ),
 
-                shootArtifacts(),
+                shootArtifacts()
 
+                /*
                 // Intake Middle Spike
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeMiddleSpike),
@@ -168,6 +169,8 @@ public class CloseGate15 extends NextFTCOpMode {
                 new FollowPath(scoreLastSpike),
 
                 shootArtifacts()
+
+                 */
         );
     }
 

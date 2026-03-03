@@ -119,6 +119,7 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.stopIntake
                 ));
 
+        /*
         Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
                         new InstantCommand(() -> PedroComponent.follower().breakFollowing()),
@@ -126,6 +127,8 @@ public class MainTeleOp extends NextFTCOpMode {
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
+
+         */
     }
 
     @Override
