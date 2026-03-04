@@ -112,7 +112,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(new SequentialGroup(
                         Intake.INSTANCE.openGate,
-                        new Delay(0.4),
+                        new Delay(org.firstinspires.ftc.teamcode.globals.Constants.Intake.GATE_OPEN_TIME),
                         Intake.INSTANCE.intakeArtifacts
                 ))
                 .whenBecomesFalse(new ParallelGroup(

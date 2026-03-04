@@ -23,6 +23,8 @@ public class Constants {
 
         public static double GATE_OPEN = 1;
         public static double GATE_CLOSE = 0;
+
+        public static double GATE_OPEN_TIME = 0.3;
     }
 
     public static class Flywheel {
