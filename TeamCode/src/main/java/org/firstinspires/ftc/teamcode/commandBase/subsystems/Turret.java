@@ -63,6 +63,7 @@ public class Turret implements Subsystem {
         turretRotator.setPower(power);
 
         ActiveOpMode.telemetry().addData("TurretPos", turretRotator.getCurrentPosition());
+        ActiveOpMode.telemetry().addData("TurretTarget", targetPos);
 
     }
 }

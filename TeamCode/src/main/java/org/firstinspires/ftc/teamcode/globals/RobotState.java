@@ -30,5 +30,6 @@ public class RobotState {
     public static void recalculatePoses() {
         GOAL_POSE = new Pose((72 + (68*ALLIANCE_COLOR.getMultiplier())), 140);
         LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0);
+        AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
     }
 }

@@ -41,8 +41,8 @@ public class CloseGate15 extends NextFTCOpMode {
     private Pose scorePose = new Pose(50, 83);
     private Pose closeSpikePose = new Pose(23.2, 84);
     private Pose middleSpikePose = new Pose(18.8, 59.9);
-    private Pose gateOpenPose = new Pose(15.7, 70);
-    private Pose gateIntakePose = new Pose(10.5, 52.6);
+    private Pose gateOpenPose = new Pose(20.7, 70);
+    private Pose gateIntakePose = new Pose(12.75, 42.6);
     private Pose lastScorePose = new Pose(54.4, 124.6);
 
     public void initPose() {
@@ -81,7 +81,7 @@ public class CloseGate15 extends NextFTCOpMode {
                 .build();
         gateIntake = follower().pathBuilder()
                 .addPath(new BezierCurve(gateOpenPose, new Pose(16.7, 59.9), gateIntakePose))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(110))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(100))
                 .build();
         gateToScore = follower().pathBuilder()
                 .addPath(new BezierLine(gateIntakePose, scorePose))
@@ -116,12 +116,11 @@ public class CloseGate15 extends NextFTCOpMode {
                 // Drive to scorePose
                 new ParallelGroup(
                         new FollowPath(scorePreload),
-                        Flywheel.INSTANCE.turnFlywheelOn
+                        Flywheel.INSTANCE.turnFlywheelOn,
+                        Turret.INSTANCE.enableTracking
                 ),
 
-                shootArtifacts()
-
-                /*
+                shootArtifacts(),
                 // Intake Middle Spike
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeMiddleSpike),
@@ -144,7 +143,9 @@ public class CloseGate15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
                 new FollowPath(gateToScore),
 
-                shootArtifacts(),
+                shootArtifacts()
+
+                /*
 
                 // Open gate
                 new FollowPath(scoreToGate),

@@ -86,7 +86,7 @@ public class MainTeleOp extends NextFTCOpMode {
 
         driverControlled.schedule();
 
-        Flywheel.INSTANCE.turnFlywheelOn.schedule();
+        //Flywheel.INSTANCE.turnFlywheelOn.schedule();
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
         Lift.INSTANCE.disengageLift.schedule();
         Turret.INSTANCE.enableTracking.schedule();
@@ -110,8 +110,9 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         Gamepads.gamepad1().rightBumper()
-                .whenBecomesTrue(new ParallelGroup(
+                .whenBecomesTrue(new SequentialGroup(
                         Intake.INSTANCE.openGate,
+                        new Delay(0.4),
                         Intake.INSTANCE.intakeArtifacts
                 ))
                 .whenBecomesFalse(new ParallelGroup(

@@ -36,12 +36,12 @@ public class Flywheel implements Subsystem {
     private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     private final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(73.39, 11.0, 12.0, 13.0), // distance
-            Arrays.asList(1460.0, 0.2, 0.3, 0.4) // shooter velocity
+            Arrays.asList(73.39, 73.39), // distance
+            Arrays.asList(1460.0, 1460.0) // shooter velocity
     );
     private final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(73.39, 11.0, 12.0, 13.0), // distance
-            Arrays.asList(0.44, 0.2, 0.3, 0.4) // hood position
+            Arrays.asList(73.39, 73.39), // distance
+            Arrays.asList(0.44, 0.44) // hood position
     );
 
     private boolean spinFlywheel = false;

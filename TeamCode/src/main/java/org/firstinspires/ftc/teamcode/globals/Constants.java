@@ -21,18 +21,18 @@ public class Constants {
         public static double INTAKE_POWER = 1;
         public static double OUTTAKE_POWER = -0.2;
 
-        public static double GATE_OPEN = 0;
-        public static double GATE_CLOSE = 1;
+        public static double GATE_OPEN = 1;
+        public static double GATE_CLOSE = 0;
     }
 
     public static class Flywheel {
-        public static double kP = 0;
+        public static double kP = 0.0008;
         public static double kI = 0;
         public static double kD = 0;
 
-        public static double kV = 0.00041;
+        public static double kV = 0.00051;
         public static double kA = 0;
-        public static double kS = 0.05;
+        public static double kS = 0.06;
 
         public static double IDLE_VELOCITY = 1000;
         // hood servo top = 0.16, hood servo bottom = 0.68

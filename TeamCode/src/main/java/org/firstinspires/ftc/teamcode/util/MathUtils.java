@@ -7,9 +7,9 @@ public class MathUtils {
         double dx = target.getX() - robot.getX();
         double dy = target.getY() - robot.getY();
 
-        double globalAngleToTarget = Math.atan2(dy, dx);
+        double rawDelta = Math.atan2(dy, dx) - robot.getHeading();
 
-        return globalAngleToTarget - robot.getHeading();
+        return Math.atan2(Math.sin(rawDelta), Math.cos(rawDelta));
     }
 
     public static double clampValue(double value, double low, double high) {
