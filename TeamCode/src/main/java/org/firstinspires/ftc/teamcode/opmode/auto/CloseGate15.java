@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -32,7 +33,7 @@ public class CloseGate15 extends NextFTCOpMode {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Lift.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
     }
@@ -100,10 +101,7 @@ public class CloseGate15 extends NextFTCOpMode {
     public Command shootArtifacts() {
         return new SequentialGroup(
                 new SequentialGroup(
-                        new SequentialGroup(
-                                Intake.INSTANCE.openGate,
-                                new Delay(org.firstinspires.ftc.teamcode.globals.Constants.Intake.GATE_OPEN_TIME)
-                        ),
+                        Intake.INSTANCE.openGate,
                         Intake.INSTANCE.intakeArtifacts,
                         new Delay(shootTimeSeconds)
                 ),
@@ -192,6 +190,7 @@ public class CloseGate15 extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        Lift.INSTANCE.disengageLift.schedule();
         autonomousRoutine().schedule();
     }
 

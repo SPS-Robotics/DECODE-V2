@@ -27,6 +27,9 @@ public class Intake implements Subsystem {
     public Command outtakeArtifacts = new SetPower(intakeMotor, Constants.Intake.OUTTAKE_POWER).requires(intakeMotor);
     public Command stopIntake = new SetPower(intakeMotor, 0).requires(intakeMotor);
 
-    public Command openGate = new SetPosition(gateServo, Constants.Intake.GATE_OPEN).requires(gateServo);
+    public Command openGate = new SequentialGroup(
+            new SetPosition(gateServo, Constants.Intake.GATE_OPEN),
+            new Delay(Constants.Intake.GATE_OPEN_TIME)
+    ).requires(gateServo);
     public Command closeGate = new SetPosition(gateServo, Constants.Intake.GATE_CLOSE).requires(gateServo);
 }

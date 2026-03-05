@@ -49,7 +49,10 @@ public class MainTeleOp extends NextFTCOpMode {
         );
     }
     @Override
-    public void onInit() { }
+    public void onInit() {
+        Turret.INSTANCE.disableTracking.schedule();
+        Flywheel.INSTANCE.turnFlywheelOff.schedule();
+    }
 
     @Override
     public void onWaitForStart() {
@@ -89,7 +92,7 @@ public class MainTeleOp extends NextFTCOpMode {
         //Flywheel.INSTANCE.turnFlywheelOn.schedule();
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
         Lift.INSTANCE.disengageLift.schedule();
-        Turret.INSTANCE.enableTracking.schedule();
+        //Turret.INSTANCE.enableTracking.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -112,7 +115,6 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(new SequentialGroup(
                         Intake.INSTANCE.openGate,
-                        new Delay(org.firstinspires.ftc.teamcode.globals.Constants.Intake.GATE_OPEN_TIME),
                         Intake.INSTANCE.intakeArtifacts
                 ))
                 .whenBecomesFalse(new ParallelGroup(
@@ -137,6 +139,7 @@ public class MainTeleOp extends NextFTCOpMode {
         telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
         telemetry.update();
         drawOnlyCurrent();
     }

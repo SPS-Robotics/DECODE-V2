@@ -9,7 +9,7 @@ public class Constants {
         public static double ticksPerRevolution = 28.0 * 18.9; // Motor Encoder Calculation Required
         public static double pulleyRatio = 107.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -1000;
+        public static double MIN_TICKS = -700;
         public static double MAX_TICKS = 1000;
 
         public static double kP = 0.008;
@@ -19,12 +19,12 @@ public class Constants {
 
     public static class Intake {
         public static double INTAKE_POWER = 1;
-        public static double OUTTAKE_POWER = -0.2;
+        public static double OUTTAKE_POWER = -0.4;
 
         public static double GATE_OPEN = 1;
         public static double GATE_CLOSE = 0;
 
-        public static double GATE_OPEN_TIME = 0.3;
+        public static double GATE_OPEN_TIME = 0.6;
     }
 
     public static class Flywheel {

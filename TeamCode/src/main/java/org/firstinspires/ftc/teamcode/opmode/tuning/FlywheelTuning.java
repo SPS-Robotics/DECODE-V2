@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Drawing;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -109,6 +110,17 @@ public class FlywheelTuning extends NextFTCOpMode {
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(TuningFlywheel.INSTANCE.turnOn)
                 .whenBecomesFalse(TuningFlywheel.INSTANCE.turnOff);
+
+        Gamepads.gamepad1().rightBumper()
+                .whenBecomesTrue(new SequentialGroup(
+                        Intake.INSTANCE.openGate,
+                        Intake.INSTANCE.intakeArtifacts
+                ))
+                .whenBecomesFalse(new ParallelGroup(
+                        Intake.INSTANCE.closeGate,
+                        Intake.INSTANCE.stopIntake
+                ));
+
     }
     @Override
     public void onUpdate() {
