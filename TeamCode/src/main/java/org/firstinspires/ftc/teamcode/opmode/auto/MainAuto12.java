@@ -42,7 +42,7 @@ public class MainAuto12 extends NextFTCOpMode {
     private Pose scorePose = new Pose(50, 83);
     private Pose closeSpikePose = new Pose(20, 84);
     private Pose middleSpikePose = new Pose(18.8, 59.9);
-    private Pose gateOpenPose = new Pose(20.7, 70);
+    private Pose gateOpenPose = new Pose(22.7, 70);
     private Pose farSpikePose = new Pose(20.7, 35);
     private Pose lastScorePose = new Pose(54.4, 124.6);
 
