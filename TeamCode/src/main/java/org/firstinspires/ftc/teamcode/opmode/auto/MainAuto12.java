@@ -39,7 +39,7 @@ public class MainAuto12 extends NextFTCOpMode {
     }
 
     private Pose startPose = new Pose(17.5, 120, Math.toRadians(324));
-    private Pose scorePose = new Pose(50, 83);
+    private Pose scorePose = new Pose(41.2, 96.3);
     private Pose closeSpikePose = new Pose(20, 84);
     private Pose middleSpikePose = new Pose(18.8, 59.9);
     private Pose gateOpenPose = new Pose(22.7, 70);
@@ -65,11 +65,11 @@ public class MainAuto12 extends NextFTCOpMode {
     public void buildPaths() {
         scorePreload = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(178))
+                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(180))
                 .build();
         intakeCloseSpike = follower().pathBuilder()
-                .addPath(new BezierLine(scorePose, closeSpikePose))
-                .setConstantHeadingInterpolation(Math.toRadians(178))
+                .addPath(new BezierCurve(scorePose, new Pose(57.8, 82), closeSpikePose))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
         openGate = follower().pathBuilder()
                 .addPath(new BezierCurve(closeSpikePose, new Pose(36.1, 75.5), gateOpenPose))
@@ -77,19 +77,19 @@ public class MainAuto12 extends NextFTCOpMode {
                 .build();
         scoreCloseSpike = follower().pathBuilder()
                 .addPath(new BezierLine(gateOpenPose, scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(220))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(288))
                 .build();
         intakeMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(53.2, 58.4), middleSpikePose))
-                .setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(288), Math.toRadians(180))
                 .build();
         scoreMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierLine(middleSpikePose, scorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(220))
+                .setConstantHeadingInterpolation(Math.toRadians(240))
                 .build();
         intakeFarSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(52.5, 31), farSpikePose))
-                .setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(280), Math.toRadians(180))
                 .build();
         scoreLastSpike = follower().pathBuilder()
                 .addPath(new BezierLine(farSpikePose, lastScorePose))
