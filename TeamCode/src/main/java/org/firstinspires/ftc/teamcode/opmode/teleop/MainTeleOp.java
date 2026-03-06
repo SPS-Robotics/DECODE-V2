@@ -63,6 +63,7 @@ public class MainTeleOp extends NextFTCOpMode {
         telemetry.addData("Robot Y", robotPose.getY());
         telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
+        telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
         telemetry.update();
     }
