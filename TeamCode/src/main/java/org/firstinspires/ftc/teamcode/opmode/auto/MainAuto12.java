@@ -65,11 +65,11 @@ public class MainAuto12 extends NextFTCOpMode {
     public void buildPaths() {
         scorePreload = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(180))
+                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(260))
                 .build();
         intakeCloseSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(57.8, 82), closeSpikePose))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(180))
                 .build();
         openGate = follower().pathBuilder()
                 .addPath(new BezierCurve(closeSpikePose, new Pose(36.1, 75.5), gateOpenPose))
@@ -77,7 +77,7 @@ public class MainAuto12 extends NextFTCOpMode {
                 .build();
         scoreCloseSpike = follower().pathBuilder()
                 .addPath(new BezierLine(gateOpenPose, scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(240))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(260))
                 .build();
         intakeMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(53.2, 58.4), middleSpikePose))
@@ -85,7 +85,7 @@ public class MainAuto12 extends NextFTCOpMode {
                 .build();
         scoreMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierLine(middleSpikePose, scorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(240))
+                .setLinearHeadingInterpolation(Math.toRadians(240), Math.toRadians(260))
                 .build();
         intakeFarSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(52.5, 31), farSpikePose))
@@ -93,7 +93,7 @@ public class MainAuto12 extends NextFTCOpMode {
                 .build();
         scoreLastSpike = follower().pathBuilder()
                 .addPath(new BezierLine(farSpikePose, lastScorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(250))
+                .setLinearHeadingInterpolation(Math.toRadians(250), Math.toRadians(280))
                 .build();
     }
 
