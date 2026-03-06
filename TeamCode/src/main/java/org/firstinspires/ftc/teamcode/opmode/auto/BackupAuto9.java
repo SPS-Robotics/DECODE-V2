@@ -64,15 +64,15 @@ public class BackupAuto9 extends NextFTCOpMode {
     public void buildPaths() {
         scorePreload = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(180))
+                .setLinearHeadingInterpolation(startPose.getHeading(), Math.toRadians(260))
                 .build();
         intakeCloseSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(57.8, 82), closeSpikePose))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(220), Math.toRadians(180))
                 .build();
         scoreCloseSpike = follower().pathBuilder()
                 .addPath(new BezierLine(closeSpikePose, scorePose))
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(240))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(260))
                 .build();
         intakeMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(53.2, 58.4), middleSpikePose))
@@ -80,9 +80,10 @@ public class BackupAuto9 extends NextFTCOpMode {
                 .build();
         scoreMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierLine(middleSpikePose, lastScorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(245))
+                .setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(280))
                 .build();
     }
+
 
     public Command shootArtifacts() {
         return new SequentialGroup(

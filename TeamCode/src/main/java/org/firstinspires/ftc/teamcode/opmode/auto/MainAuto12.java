@@ -58,7 +58,7 @@ public class MainAuto12 extends NextFTCOpMode {
         }
     }
 
-    double shootTimeSeconds = 2;
+    double shootTimeSeconds = 1.8;
 
     public PathChain scorePreload, intakeCloseSpike, openGate, scoreCloseSpike, intakeMiddleSpike, scoreMiddleSpike, intakeFarSpike, scoreLastSpike;
 
