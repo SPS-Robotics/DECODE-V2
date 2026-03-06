@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
@@ -28,8 +27,8 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous(name="12 Artifact - ALL 3 SPIKES")
-public class MainAuto12 extends NextFTCOpMode {
-    public MainAuto12() {
+public class BackupAuto9 extends NextFTCOpMode {
+    public BackupAuto9() {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
@@ -71,12 +70,8 @@ public class MainAuto12 extends NextFTCOpMode {
                 .addPath(new BezierCurve(scorePose, new Pose(57.8, 82), closeSpikePose))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
-        openGate = follower().pathBuilder()
-                .addPath(new BezierCurve(closeSpikePose, new Pose(36.1, 75.5), gateOpenPose))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
         scoreCloseSpike = follower().pathBuilder()
-                .addPath(new BezierLine(gateOpenPose, scorePose))
+                .addPath(new BezierLine(closeSpikePose, scorePose))
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(240))
                 .build();
         intakeMiddleSpike = follower().pathBuilder()
@@ -84,8 +79,8 @@ public class MainAuto12 extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(288), Math.toRadians(180))
                 .build();
         scoreMiddleSpike = follower().pathBuilder()
-                .addPath(new BezierLine(middleSpikePose, scorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(240))
+                .addPath(new BezierLine(middleSpikePose, lastScorePose))
+                .setConstantHeadingInterpolation(Math.toRadians(245))
                 .build();
         intakeFarSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, new Pose(52.5, 31), farSpikePose))
@@ -100,13 +95,18 @@ public class MainAuto12 extends NextFTCOpMode {
     public Command shootArtifacts() {
         return new SequentialGroup(
                 new SequentialGroup(
+                        Flywheel.INSTANCE.turnFlywheelOn,
+                        new Delay(1.8)
+                ),
+                new SequentialGroup(
                         Intake.INSTANCE.openGate,
                         Intake.INSTANCE.intakeArtifacts,
                         new Delay(shootTimeSeconds)
                 ),
                 new ParallelGroup(
                         Intake.INSTANCE.closeGate,
-                        Intake.INSTANCE.stopIntake
+                        Intake.INSTANCE.stopIntake,
+                        Flywheel.INSTANCE.turnFlywheelOff
                 )
         );
     }
@@ -115,7 +115,6 @@ public class MainAuto12 extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         new FollowPath(scorePreload),
-                        Flywheel.INSTANCE.turnFlywheelOn,
                         new SequentialGroup(
                                 new Delay(0.8),
                                 Turret.INSTANCE.enableTracking
@@ -128,7 +127,6 @@ public class MainAuto12 extends NextFTCOpMode {
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeCloseSpike),
                 Intake.INSTANCE.stopIntake,
-                new FollowPath(openGate),
 
                 // Drive to scorePose
                 new FollowPath(scoreCloseSpike),
@@ -141,16 +139,6 @@ public class MainAuto12 extends NextFTCOpMode {
                 // Drive to scorePose
                 Intake.INSTANCE.stopIntake,
                 new FollowPath(scoreMiddleSpike),
-
-                shootArtifacts(),
-
-                // Intake Far Spike
-                Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(intakeFarSpike),
-
-                // Drive to lastScorePose
-                Intake.INSTANCE.stopIntake,
-                new FollowPath(scoreLastSpike),
 
                 shootArtifacts()
         );

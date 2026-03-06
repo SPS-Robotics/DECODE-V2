@@ -118,8 +118,8 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.intakeArtifacts
                 ))
                 .whenBecomesFalse(new ParallelGroup(
-                        Intake.INSTANCE.closeGate,
-                        Intake.INSTANCE.stopIntake
+                        Intake.INSTANCE.stopIntake,
+                        Intake.INSTANCE.closeGate
                 ));
 
         Gamepads.gamepad1().square()
@@ -129,6 +129,15 @@ public class MainTeleOp extends NextFTCOpMode {
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
+
+        Gamepads.gamepad2().cross()
+                .whenBecomesTrue(Turret.INSTANCE.setTurretPosition(0));
+
+        Gamepads.gamepad2().dpadUp()
+                .whenBecomesTrue(new InstantCommand(() -> RobotState.GOAL_POSE.plus(new Pose(-1, 1))));
+
+        Gamepads.gamepad2().dpadDown()
+                .whenBecomesTrue(new InstantCommand(() -> RobotState.GOAL_POSE.minus(new Pose(-1, 1))));
     }
 
     @Override
@@ -140,8 +149,9 @@ public class MainTeleOp extends NextFTCOpMode {
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
         telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
+        telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
         telemetry.update();
-        drawOnlyCurrent();
+        //drawOnlyCurrent();
     }
 
     @Override
