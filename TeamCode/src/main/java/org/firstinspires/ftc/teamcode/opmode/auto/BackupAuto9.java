@@ -59,7 +59,7 @@ public class BackupAuto9 extends NextFTCOpMode {
 
     double shootTimeSeconds = 2;
 
-    public PathChain scorePreload, intakeCloseSpike, openGate, scoreCloseSpike, intakeMiddleSpike, scoreMiddleSpike, intakeFarSpike, scoreLastSpike;
+    public PathChain scorePreload, intakeCloseSpike, scoreCloseSpike, intakeMiddleSpike, scoreMiddleSpike;
 
     public void buildPaths() {
         scorePreload = follower().pathBuilder()
@@ -81,14 +81,6 @@ public class BackupAuto9 extends NextFTCOpMode {
         scoreMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierLine(middleSpikePose, lastScorePose))
                 .setConstantHeadingInterpolation(Math.toRadians(245))
-                .build();
-        intakeFarSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(scorePose, new Pose(52.5, 31), farSpikePose))
-                .setLinearHeadingInterpolation(Math.toRadians(280), Math.toRadians(180))
-                .build();
-        scoreLastSpike = follower().pathBuilder()
-                .addPath(new BezierLine(farSpikePose, lastScorePose))
-                .setConstantHeadingInterpolation(Math.toRadians(250))
                 .build();
     }
 
@@ -119,7 +111,6 @@ public class BackupAuto9 extends NextFTCOpMode {
                                 new Delay(0.8),
                                 Turret.INSTANCE.enableTracking
                 )),
-
 
                 shootArtifacts(),
 
