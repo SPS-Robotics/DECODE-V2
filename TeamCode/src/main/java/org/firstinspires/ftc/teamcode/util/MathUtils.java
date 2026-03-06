@@ -7,7 +7,7 @@ public class MathUtils {
         double dx = target.getX() - robot.getX();
         double dy = target.getY() - robot.getY();
 
-        double rawDelta = Math.atan2(dy, dx) - robot.getHeading();
+        double rawDelta = Math.atan2(dy, dx) - (robot.getHeading() + Math.PI);
 
         return Math.atan2(Math.sin(rawDelta), Math.cos(rawDelta));
     }
