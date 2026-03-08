@@ -15,4 +15,8 @@ public class MathUtils {
     public static double clampValue(double value, double low, double high) {
         return Math.max(low, Math.min(value, high));
     }
+
+    public static double mirrorHeading(double heading) {
+        return Math.PI - heading;
+    }
 }
