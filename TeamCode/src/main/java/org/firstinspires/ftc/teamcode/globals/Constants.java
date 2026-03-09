@@ -28,7 +28,7 @@ public class Constants {
     }
 
     public static class Flywheel {
-        public static double kP = 0.0008;
+        public static double kP = 0.001;
         public static double kI = 0;
         public static double kD = 0;
 

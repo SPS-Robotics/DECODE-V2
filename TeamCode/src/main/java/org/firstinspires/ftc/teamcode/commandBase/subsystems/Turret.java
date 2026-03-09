@@ -34,9 +34,9 @@ public class Turret implements Subsystem {
     public double getTurretPosition() {
         return turretRotator.getCurrentPosition();
     }
-    public double calculateTurretPosition() {
+    public double calculateTurretPosition(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
-        double turretAngleRadians = MathUtils.calculateAngleToPose(robotPose, RobotState.GOAL_POSE);
+        double turretAngleRadians = MathUtils.calculateAngleToPose(robotPose, goalPose);
 
         double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
         ActiveOpMode.telemetry().addData("calculatedTickOffset", goalLocation);
@@ -52,7 +52,7 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        double targetPos = calculateTurretPosition();
+        double targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
 
