@@ -23,14 +23,14 @@ public class RobotState {
     public static Pose AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
 
     public static Pose GOAL_POSE = new Pose((72 + (70*ALLIANCE_COLOR.getMultiplier())), 133); // tune and then do shooter and hood tuning.
-    public static Pose LOADING_ZONE = new Pose(72 + (72 * ALLIANCE_COLOR.getMultiplier()), 0); // depends on robot centre - tune later.
+    public static Pose LOADING_ZONE = new Pose((72 + (ALLIANCE_COLOR.getMultiplier() * (72 - 7.95276))), 6.90691968504, Math.toRadians(90 + ALLIANCE_COLOR.getMultiplier() * 90));
 
     public static double TURRET_END_POS = 0;
 
     public static void setAlliance(AllianceColor alliance) {
         ALLIANCE_COLOR = alliance;
         GOAL_POSE = new Pose((72 + (70*alliance.getMultiplier())), 133);
-        LOADING_ZONE = new Pose(72 + (72 * alliance.getMultiplier()), 0);
+        LOADING_ZONE = new Pose((72 + (alliance.getMultiplier() * (72 - 7.95276))), 6.90691968504, Math.toRadians(90 + alliance.getMultiplier() * 90));
         if (alliance == AllianceColor.BLUE) AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
         else AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324)).mirror();
         TURRET_END_POS = 0;

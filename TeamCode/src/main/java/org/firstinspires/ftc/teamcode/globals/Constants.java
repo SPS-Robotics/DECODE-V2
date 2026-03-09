@@ -59,6 +59,7 @@ public class Constants {
     }
 
     public static class Limelight {
+        public static double MAX_RELOC_VELOCITY = 1;
         public static double METERS_TO_INCHES = 39.3701;
         public static double MAX_ERROR_INCH = 1;
     }

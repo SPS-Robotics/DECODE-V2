@@ -88,6 +88,11 @@ public class Limelight implements Subsystem {
             LLResult result = ll.getLatestResult();
             if (result == null || !result.isValid()) return;
 
+            if (Math.abs(PedroComponent.follower().getAngularVelocity()) > Constants.Limelight.MAX_RELOC_VELOCITY) {
+                tryRelocalise = false;
+                relocalisationPoses.clear();
+            }
+
             Pose3D limelightPose = result.getBotpose();
 
             relocalisationPoses.add(convertLLToPose(limelightPose));

@@ -132,7 +132,7 @@ public class MainTeleOp extends NextFTCOpMode {
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
 
-        Gamepads.gamepad1().cross()
+        Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
 
         Gamepads.gamepad2().cross()
