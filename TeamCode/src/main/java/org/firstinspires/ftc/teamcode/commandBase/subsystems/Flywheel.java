@@ -11,15 +11,12 @@ import java.util.Arrays;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
-import dev.nextftc.control.feedback.PIDCoefficients;
-import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.MotorGroup;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 
@@ -35,17 +32,6 @@ public class Flywheel implements Subsystem {
 
     private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
-    /*
-    private final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(67.5254, 80.6825, 42.0971, 66.5632, 56.9606, 72.2892, 49.6647, 87.8641), // distance
-            Arrays.asList(1450.0, 1500.0, 1250.0, 1400.0, 1350.0, 1450.0, 1250.0, 1600.0) // shooter velocity
-    );
-    private final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(67.5254, 80.6825, 42.0971, 66.5632, 56.9606, 72.2892, 49.6647, 87.8641), // distance
-            Arrays.asList(0.34, 0.26, 0.32, 0.2, 0.24, 0.2, 0.3, 0.18) // hood position
-    );
-
-     */
     private final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641),
             Arrays.asList(1250.0, 1250.0, 1350.0, 1400.0, 1450.0, 1450.0, 1500.0, 1600.0)
@@ -55,6 +41,7 @@ public class Flywheel implements Subsystem {
             Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641),
             Arrays.asList(0.32, 0.30, 0.24, 0.20, 0.34, 0.20, 0.26, 0.18)
     ).createLUT();
+
     private boolean spinFlywheel = false;
     double power;
 

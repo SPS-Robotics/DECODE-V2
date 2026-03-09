@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.globals;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.Pose;
 
 @Configurable
 public class Constants {

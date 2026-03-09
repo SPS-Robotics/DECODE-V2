@@ -22,12 +22,14 @@ public class Limelight implements Subsystem {
     private Limelight() { }
 
     private boolean tryRelocalise = false;
-    private boolean tryArtifactPathing = false;
 
     private Limelight3A ll;
     private List<Pose> relocalisationPoses = new ArrayList<>();
 
-    public Command relocaliseOdometry = new InstantCommand(() -> tryRelocalise = true);
+    public Command relocaliseOdometry = new InstantCommand(() -> {
+        relocalisationPoses.clear();
+        tryRelocalise = true;
+    });
 
     private Pose convertLLToPose(Pose3D limelightPose) {
         double xInches = limelightPose.getPosition().x * Constants.Limelight.METERS_TO_INCHES;
