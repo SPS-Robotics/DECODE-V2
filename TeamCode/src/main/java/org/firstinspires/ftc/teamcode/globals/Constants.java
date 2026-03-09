@@ -15,6 +15,8 @@ public class Constants {
         public static double kP = 0.008;
         public static double kI = 0;
         public static double kD = 0.0001;
+
+        public static double RELOC_POS = 0;
     }
 
     public static class Intake {
@@ -55,5 +57,10 @@ public class Constants {
     public static class Auto {
         public static double SHOOT_TIME = 1.5;
         public static double GATE_DELAY = 3;
+    }
+
+    public static class Limelight {
+        public static double METERS_TO_INCHES = 39.3701;
+        public static double MAX_ERROR_INCH = 1;
     }
 }

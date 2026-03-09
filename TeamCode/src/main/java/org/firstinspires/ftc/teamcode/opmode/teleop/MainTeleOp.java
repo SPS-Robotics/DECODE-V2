@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.robot.Robot;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.commandBase.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.TuningFlywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
@@ -44,7 +45,7 @@ public class MainTeleOp extends NextFTCOpMode {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE, Flywheel.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
     }
@@ -130,6 +131,9 @@ public class MainTeleOp extends NextFTCOpMode {
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
+
+        Gamepads.gamepad1().cross()
+                .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
 
         Gamepads.gamepad2().cross()
                 .whenBecomesTrue(Turret.INSTANCE.setTurretPosition(0));

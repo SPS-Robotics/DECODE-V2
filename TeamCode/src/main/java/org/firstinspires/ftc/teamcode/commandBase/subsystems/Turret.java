@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.globals.Constants;
 
@@ -29,6 +30,8 @@ public class Turret implements Subsystem {
             .build();
 
     private final MotorEx turretRotator = new MotorEx("turretRotator").zeroed().brakeMode();
+
+    private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
     private boolean turretTracking = false;
 
     public double getTurretPosition() {
@@ -52,6 +55,8 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
+        if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
+
         double targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
