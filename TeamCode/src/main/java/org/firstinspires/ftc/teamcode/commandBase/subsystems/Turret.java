@@ -22,6 +22,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Turret implements Subsystem {
     public static final Turret INSTANCE = new Turret();
     private Turret() { }
+
     ControlSystem controller = ControlSystem.builder()
             .posPid(Constants.Turret.kP, Constants.Turret.kI, Constants.Turret.kD)
             .build();
@@ -34,13 +35,12 @@ public class Turret implements Subsystem {
     public double getTurretPosition() {
         return turretRotator.getCurrentPosition();
     }
+
     public double calculateTurretPosition(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
         double turretAngleRadians = MathUtils.calculateAngleToPose(robotPose, goalPose);
 
         double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
-        ActiveOpMode.telemetry().addData("calculatedTickOffset", goalLocation);
-
         return MathUtils.clampValue(goalLocation, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);
     }
 
