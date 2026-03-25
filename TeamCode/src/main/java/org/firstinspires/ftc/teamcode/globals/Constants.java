@@ -16,6 +16,8 @@ public class Constants {
         public static double kD = 0.0001;
 
         public static double RELOC_POS = 0;
+
+        public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
     }
 
     public static class Intake {

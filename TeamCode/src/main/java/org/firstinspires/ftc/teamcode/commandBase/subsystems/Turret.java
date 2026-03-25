@@ -38,7 +38,8 @@ public class Turret implements Subsystem {
 
     public double calculateTurretPosition(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
-        double turretAngleRadians = MathUtils.calculateAngleToPose(robotPose, goalPose);
+        Pose turretPose = MathUtils.translatePose(robotPose, -Constants.Turret.CENTRE_OFFSET);
+        double turretAngleRadians = MathUtils.calculateAngleToPose(turretPose, goalPose);
 
         double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
         return MathUtils.clampValue(goalLocation, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);

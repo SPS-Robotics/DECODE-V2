@@ -37,6 +37,7 @@ import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.Direction;
 import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
+import kotlin.time.Instant;
 
 
 @TeleOp(name = "TeleOp")
@@ -49,6 +50,7 @@ public class MainTeleOp extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower)
         );
     }
+
     @Override
     public void onInit() {
         Turret.INSTANCE.disableTracking.schedule();
@@ -134,6 +136,9 @@ public class MainTeleOp extends NextFTCOpMode {
 
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
+
+        Gamepads.gamepad1().dpadUp()
+                .whenBecomesTrue(new InstantCommand(() -> PedroComponent.follower().setPose(RobotState.LOADING_ZONE)));
 
         Gamepads.gamepad2().cross()
                 .whenBecomesTrue(Turret.INSTANCE.setTurretPosition(0));

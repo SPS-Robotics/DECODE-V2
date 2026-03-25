@@ -27,7 +27,7 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-public class ThreeSpike12 extends NextFTCOpMode {
+public abstract class ThreeSpike12 extends NextFTCOpMode {
     protected final RobotState.AllianceColor alliance;
 
     public ThreeSpike12(RobotState.AllianceColor alliance) {
