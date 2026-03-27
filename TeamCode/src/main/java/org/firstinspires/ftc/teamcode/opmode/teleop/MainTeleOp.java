@@ -51,6 +51,11 @@ public class MainTeleOp extends NextFTCOpMode {
         );
     }
 
+    private PedroDriverControlled driverControlled;
+    private double scalar = 1;
+
+
+
     @Override
     public void onInit() {
         Turret.INSTANCE.disableTracking.schedule();
@@ -126,6 +131,10 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate
                 ));
 
+        Gamepads.gamepad1().leftBumper()
+                .whenBecomesTrue(() -> scalar = 0.2)
+                .whenBecomesFalse(() -> scalar = 1);
+
         Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
                         new InstantCommand(() -> PedroComponent.follower().breakFollowing()),
@@ -138,20 +147,22 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
 
         Gamepads.gamepad1().dpadUp()
-                .whenBecomesTrue(new InstantCommand(() -> PedroComponent.follower().setPose(RobotState.LOADING_ZONE)));
+                .whenBecomesTrue(() -> PedroComponent.follower().setPose(RobotState.LOADING_ZONE));
 
         Gamepads.gamepad2().cross()
                 .whenBecomesTrue(Turret.INSTANCE.setTurretPosition(0));
 
         Gamepads.gamepad2().dpadUp()
-                .whenBecomesTrue(new InstantCommand(() -> RobotState.GOAL_POSE.plus(new Pose(-1, 1))));
+                .whenBecomesTrue(() -> RobotState.GOAL_POSE.plus(new Pose(-1, 1)));
 
         Gamepads.gamepad2().dpadDown()
-                .whenBecomesTrue(new InstantCommand(() -> RobotState.GOAL_POSE.minus(new Pose(-1, 1))));
+                .whenBecomesTrue(() -> RobotState.GOAL_POSE.minus(new Pose(-1, 1)));
     }
 
     @Override
     public void onUpdate() {
+        driverControlled.setScalar(scalar);
+
         Pose robotPose = follower().getPose();
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());

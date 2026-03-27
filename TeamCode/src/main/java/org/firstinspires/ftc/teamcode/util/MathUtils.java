@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.util;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
+import dev.nextftc.extensions.pedro.PedroComponent;
+
 public class MathUtils {
     public static double calculateAngleToPose(Pose robot, Pose target) {
         double dx = target.getX() - robot.getX();
@@ -19,6 +21,14 @@ public class MathUtils {
                 displacement.getXComponent(),
                 displacement.getYComponent(),
                 0
+        ));
+    }
+
+    public static Pose velocityCompensatePose(Pose original, Vector velocity, double timeOfFlight) {
+        Vector displacement = velocity.times(timeOfFlight);
+        return original.minus(new Pose(
+                displacement.getXComponent(),
+                displacement.getYComponent()
         ));
     }
 

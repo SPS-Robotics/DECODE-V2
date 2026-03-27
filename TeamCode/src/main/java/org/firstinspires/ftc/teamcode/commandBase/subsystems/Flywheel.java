@@ -32,15 +32,7 @@ public class Flywheel implements Subsystem {
 
     private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
-    private final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641), // Distance
-            Arrays.asList(1250.0, 1250.0, 1350.0, 1400.0, 1450.0, 1450.0, 1500.0, 1600.0) // Flywheel RPM
-    ).createLUT();
 
-    private final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641),
-            Arrays.asList(0.32, 0.30, 0.24, 0.20, 0.34, 0.20, 0.26, 0.18)
-    ).createLUT();
 
     private boolean spinFlywheel = false;
     double power;
@@ -56,10 +48,10 @@ public class Flywheel implements Subsystem {
     public void periodic() {
         Pose robotPose = PedroComponent.follower().getPose();
 
-        double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
+        double distance = robotPose.distanceFrom(RobotState.velocityCompensate(RobotState.GOAL_POSE));
 
-        hoodServo.setPosition(hoodLUT.get(distance));
-        controller.setGoal(new KineticState(0, velocityLUT.get(distance), 0));
+        hoodServo.setPosition(RobotState.hoodLUT.get(distance));
+        controller.setGoal(new KineticState(0, RobotState.velocityLUT.get(distance), 0));
 
         if (!spinFlywheel) power = 0;
         else power = controller.calculate(flywheelMotors.getState());

@@ -65,4 +65,8 @@ public class Constants {
         public static double METERS_TO_INCHES = 39.3701;
         public static double MAX_ERROR_INCH = 1;
     }
+
+    public static class Drive {
+        public static double slowModeScalar = 0.2;
+    }
 }

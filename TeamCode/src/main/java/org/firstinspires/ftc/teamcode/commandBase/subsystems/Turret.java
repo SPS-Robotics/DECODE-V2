@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.commandBase.subsystems;
 
 import org.firstinspires.ftc.teamcode.globals.RobotState;
+import org.firstinspires.ftc.teamcode.util.InterpLUT;
 import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.globals.Constants;
+
+import java.util.Arrays;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
@@ -36,10 +40,12 @@ public class Turret implements Subsystem {
         return turretRotator.getCurrentPosition();
     }
 
+
+
     public double calculateTurretPosition(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
         Pose turretPose = MathUtils.translatePose(robotPose, -Constants.Turret.CENTRE_OFFSET);
-        double turretAngleRadians = MathUtils.calculateAngleToPose(turretPose, goalPose);
+        double turretAngleRadians = MathUtils.calculateAngleToPose(turretPose, RobotState.velocityCompensate(goalPose));
 
         double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
         return MathUtils.clampValue(goalLocation, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);
@@ -47,6 +53,7 @@ public class Turret implements Subsystem {
 
     public Command enableTracking = new InstantCommand(() -> turretTracking = true);
     public Command disableTracking = new InstantCommand(() -> turretTracking = false);
+
     public Command setTurretPosition(double pos) {
         return new InstantCommand(() -> turretRotator.setCurrentPosition(pos));
     }
