@@ -18,7 +18,14 @@ import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Drawing;
+import org.firstinspires.ftc.teamcode.util.LightingController;
+import org.firstinspires.ftc.teamcode.util.Prism.GoBildaPrismDriver;
 
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
+import dev.nextftc.control.feedback.AngleType;
+import dev.nextftc.control.feedback.FeedbackType;
+import dev.nextftc.control.feedback.PIDElement;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -28,6 +35,7 @@ import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
@@ -51,15 +59,26 @@ public class MainTeleOp extends NextFTCOpMode {
         );
     }
 
+    private final GoBildaPrismDriver prism = ActiveOpMode.hardwareMap().get(GoBildaPrismDriver.class, "prism");
+
     private PedroDriverControlled driverControlled;
     private double scalar = 1;
 
+    private HeadingMode headingMode = HeadingMode.GAMEPAD;
+    private double targetHeading;
 
+
+
+    ControlSystem controller = ControlSystem.builder()
+            .angular(AngleType.RADIANS,
+                    feedback -> feedback.posPid(0.807, 0, 0.001)
+            ).build();
 
     @Override
     public void onInit() {
         Turret.INSTANCE.disableTracking.schedule();
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
+        LightingController.init();
     }
 
     @Override
@@ -83,7 +102,16 @@ public class MainTeleOp extends NextFTCOpMode {
             driverControlled = new PedroDriverControlled(
                     Gamepads.gamepad1().leftStickY(),
                     Gamepads.gamepad1().leftStickX(),
-                    Gamepads.gamepad1().rightStickX().negate(),
+                    () -> {
+                        switch (headingMode) {
+                            case GAMEPAD:
+                                return Gamepads.gamepad1().rightStickX().negate().get();
+                            case ABSOLUTE:
+                                return controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                            default:
+                                throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
+                        }
+                    },
                     false
             );
         }
@@ -91,35 +119,33 @@ public class MainTeleOp extends NextFTCOpMode {
             driverControlled = new PedroDriverControlled(
                     Gamepads.gamepad1().leftStickY().negate(),
                     Gamepads.gamepad1().leftStickX().negate(),
-                    Gamepads.gamepad1().rightStickX().negate(),
+                    () -> {
+                        switch (headingMode) {
+                            case GAMEPAD:
+                                return Gamepads.gamepad1().rightStickX().negate().get();
+                            case ABSOLUTE:
+                                return controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                            default:
+                                throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
+                        }
+                    },
                     false
             );
         }
 
         driverControlled.schedule();
 
-        //Flywheel.INSTANCE.turnFlywheelOn.schedule();
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
         Lift.INSTANCE.disengageLift.schedule();
-        //Turret.INSTANCE.enableTracking.schedule();
 
-        Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
+        // Intake Controls
+        Gamepads.gamepad1().rightTrigger().greaterThan(0.1)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
                 .whenBecomesFalse(Intake.INSTANCE.stopIntake);
 
-        Gamepads.gamepad1().leftTrigger().greaterThan(0.05)
+        Gamepads.gamepad1().cross()
                 .whenBecomesTrue(Intake.INSTANCE.outtakeArtifacts)
                 .whenBecomesFalse(Intake.INSTANCE.stopIntake);
-
-        Gamepads.gamepad1().triangle()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(Turret.INSTANCE.enableTracking)
-                .whenBecomesFalse(Turret.INSTANCE.disableTracking);
-
-        Gamepads.gamepad1().circle()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(Flywheel.INSTANCE.turnFlywheelOn)
-                .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(new SequentialGroup(
@@ -131,9 +157,36 @@ public class MainTeleOp extends NextFTCOpMode {
                         Intake.INSTANCE.closeGate
                 ));
 
+        // Shooter Controls
+        Gamepads.gamepad1().triangle()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Turret.INSTANCE.enableTracking)
+                .whenBecomesFalse(Turret.INSTANCE.disableTracking);
+
+        Gamepads.gamepad1().circle()
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Flywheel.INSTANCE.turnFlywheelOn)
+                .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
+
+        //Drive Controls
+        Gamepads.gamepad1().rightStickX().greaterThan(0.05)
+                .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
+
         Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> scalar = 0.2)
                 .whenBecomesFalse(() -> scalar = 1);
+
+        Gamepads.gamepad1().dpadDown()
+                .whenBecomesTrue(() -> {
+                    headingMode = HeadingMode.ABSOLUTE;
+                    targetHeading = RobotState.GATE_HEADING;
+                });
+
+        Gamepads.gamepad1().dpadUp()
+                .whenBecomesTrue(() -> {
+                    headingMode = HeadingMode.ABSOLUTE;
+                    targetHeading = RobotState.PARK_HEADING;
+                });
 
         Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
@@ -143,10 +196,11 @@ public class MainTeleOp extends NextFTCOpMode {
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
 
-        Gamepads.gamepad1().dpadDown()
+        // Debug Controls
+        Gamepads.gamepad2().circle()
                 .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
 
-        Gamepads.gamepad1().dpadUp()
+        Gamepads.gamepad2().square()
                 .whenBecomesTrue(() -> PedroComponent.follower().setPose(RobotState.LOADING_ZONE));
 
         Gamepads.gamepad2().cross()
@@ -162,6 +216,8 @@ public class MainTeleOp extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         driverControlled.setScalar(scalar);
+
+
 
         Pose robotPose = follower().getPose();
         telemetry.addData("Robot X", robotPose.getX());
@@ -185,5 +241,11 @@ public class MainTeleOp extends NextFTCOpMode {
         } catch (Exception e) {
             throw new RuntimeException("Drawing failed " + e);
         }
+    }
+
+    public enum HeadingMode {
+        GAMEPAD,
+        GOAL,
+        ABSOLUTE,
     }
 }

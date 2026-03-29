@@ -28,13 +28,15 @@ public class RobotState {
     }
 
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
+    public static Pose GOAL_POSE = new Pose(2, 133);
+    public static Pose LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
     public static Pose AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
-
-    public static Pose GOAL_POSE = new Pose((72 + (70*ALLIANCE_COLOR.getMultiplier())), 133); // tune and then do shooter and hood tuning.
-    public static Pose LOADING_ZONE = new Pose((72 + (ALLIANCE_COLOR.getMultiplier() * (72 - 7.95276))), 6.90691968504, Math.toRadians(90 + ALLIANCE_COLOR.getMultiplier() * 90));
+    public static double GATE_HEADING = Math.toRadians(140);
+    public static double PARK_HEADING = Math.toRadians(225);
 
     public static double TURRET_END_POS = 0;
 
+    
     public static final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641), // Distance
             Arrays.asList(1250.0, 1250.0, 1350.0, 1400.0, 1450.0, 1450.0, 1500.0, 1600.0) // Flywheel RPM
@@ -65,10 +67,22 @@ public class RobotState {
 
     public static void setAlliance(AllianceColor alliance) {
         ALLIANCE_COLOR = alliance;
-        GOAL_POSE = new Pose((72 + (70*alliance.getMultiplier())), 133);
-        LOADING_ZONE = new Pose((72 + (alliance.getMultiplier() * (72 - 7.95276))), 6.90691968504, Math.toRadians(90 - alliance.getMultiplier() * 90));
-        if (alliance == AllianceColor.BLUE) AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
-        else AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324)).mirror();
         TURRET_END_POS = 0;
+
+        if (alliance == AllianceColor.BLUE) {
+            GOAL_POSE = new Pose(2, 133);
+            LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
+            AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
+            GATE_HEADING = Math.toRadians(140);
+            PARK_HEADING = Math.toRadians(225);
+        }
+
+        if (alliance == AllianceColor.RED) {
+            GOAL_POSE = new Pose(141.5 - 2, 133);
+            LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180)).mirror();
+            AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324)).mirror();
+            GATE_HEADING = Math.toRadians(40);
+            PARK_HEADING = Math.toRadians(315);
+        }
     }
 }

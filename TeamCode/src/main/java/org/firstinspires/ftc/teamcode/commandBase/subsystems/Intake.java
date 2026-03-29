@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.commandBase.subsystems;
 
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.globals.Constants;
+import org.firstinspires.ftc.teamcode.util.LightingController;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
@@ -18,9 +23,11 @@ public class Intake implements Subsystem {
     private final MotorEx intakeMotor = new MotorEx("intakeMotor").brakeMode().reversed();
     private final ServoEx gateServo = new ServoEx("gateServo");
 
-    public Command intakeArtifacts = new SetPower(intakeMotor, Constants.Intake.INTAKE_POWER).requires(intakeMotor);
-    public Command outtakeArtifacts = new SetPower(intakeMotor, Constants.Intake.OUTTAKE_POWER).requires(intakeMotor);
-    public Command stopIntake = new SetPower(intakeMotor, 0).requires(intakeMotor);
+    public Command intakeArtifacts = new SetPower(intakeMotor, Constants.Intake.INTAKE_POWER);
+    public Command outtakeArtifacts = new SetPower(intakeMotor, Constants.Intake.OUTTAKE_POWER);
+    public Command stopIntake = new SetPower(intakeMotor, 0);
+
+    public boolean hasThreeBalls = true;
 
     public Command openGate = new SequentialGroup(
             new SetPosition(gateServo, Constants.Intake.GATE_OPEN),
@@ -31,4 +38,17 @@ public class Intake implements Subsystem {
             new Delay(Constants.Intake.GATE_OPEN_TIME),
             new SetPosition(gateServo, Constants.Intake.GATE_CLOSE)
     ).requires(gateServo);
+
+    @Override
+    public void initialize() {
+        //intakeMotor.getMotor().setCurrentAlert(500, CurrentUnit.MILLIAMPS);
+    }
+
+    @Override
+    public void periodic() {
+        hasThreeBalls = intakeMotor.getMotor().isOverCurrent();
+
+        LightingController.get().setRobotFull(hasThreeBalls);
+        ActiveOpMode.telemetry().addData("Intake Current", intakeMotor.getMotor().getCurrent(CurrentUnit.MILLIAMPS));
+    }
 }

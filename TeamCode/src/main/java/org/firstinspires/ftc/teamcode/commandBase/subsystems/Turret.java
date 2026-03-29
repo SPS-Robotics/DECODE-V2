@@ -70,6 +70,8 @@ public class Turret implements Subsystem {
         if (!turretTracking) power = 0;
         else power = controller.calculate(turretRotator.getState());
 
+        power += PedroComponent.follower().getAngularVelocity() * Constants.Turret.angularVelocitykV;
+
         turretRotator.setPower(power);
 
         ActiveOpMode.telemetry().addData("TurretPos", turretRotator.getCurrentPosition());

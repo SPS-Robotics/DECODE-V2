@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.globals;
 
 import com.bylazar.configurables.annotations.Configurable;
 
+import dev.nextftc.control.feedback.PIDCoefficients;
+
 @Configurable
 public class Constants {
     public static class Turret {
@@ -18,6 +20,8 @@ public class Constants {
         public static double RELOC_POS = 0;
 
         public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
+
+        public static double angularVelocitykV = 0.0001;
     }
 
     public static class Intake {
@@ -68,5 +72,8 @@ public class Constants {
 
     public static class Drive {
         public static double slowModeScalar = 0.2;
+        public static PIDCoefficients mainCoefficients = new PIDCoefficients(0, 0, 0);
     }
+
+
 }

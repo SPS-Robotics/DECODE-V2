@@ -19,7 +19,9 @@ import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -157,7 +159,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
+                new ParallelRaceGroup(
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls),
+                        new Delay(GATE_DELAY)
+                ),
 
                 // Drive to scorePose
                 Intake.INSTANCE.stopIntake,
@@ -171,7 +176,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
+                new ParallelRaceGroup(
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls),
+                        new Delay(GATE_DELAY)
+                ),
 
                 // Drive to scorePose
                 Intake.INSTANCE.stopIntake,
