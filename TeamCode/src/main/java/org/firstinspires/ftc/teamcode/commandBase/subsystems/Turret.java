@@ -33,7 +33,7 @@ public class Turret implements Subsystem {
 
     private final MotorEx turretRotator = new MotorEx("turretRotator").zeroed().brakeMode();
 
-    private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
+    //private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
     private boolean turretTracking = false;
 
     public double getTurretPosition() {
@@ -45,7 +45,7 @@ public class Turret implements Subsystem {
     public double calculateTurretPosition(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
         Pose turretPose = MathUtils.translatePose(robotPose, -Constants.Turret.CENTRE_OFFSET);
-        double turretAngleRadians = MathUtils.calculateAngleToPose(turretPose, RobotState.velocityCompensate(goalPose));
+        double turretAngleRadians = MathUtils.calculateAngleToPose(turretPose, goalPose);
 
         double goalLocation = (turretAngleRadians / (2 * Math.PI)) * Constants.Turret.ticksPerRevolution * Constants.Turret.pulleyRatio;
         return MathUtils.clampValue(goalLocation, Constants.Turret.MIN_TICKS, Constants.Turret.MAX_TICKS);
@@ -60,7 +60,7 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
+        //if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
 
         double targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
 
@@ -70,7 +70,7 @@ public class Turret implements Subsystem {
         if (!turretTracking) power = 0;
         else power = controller.calculate(turretRotator.getState());
 
-        power += PedroComponent.follower().getAngularVelocity() * Constants.Turret.angularVelocitykV;
+        //power += PedroComponent.follower().getAngularVelocity() * Constants.Turret.angularVelocitykV;
 
         turretRotator.setPower(power);
 

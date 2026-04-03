@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.util;
 
 import static org.firstinspires.ftc.teamcode.util.Prism.GoBildaPrismDriver.Artboard;
@@ -5,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.util.Prism.GoBildaPrismDriver.Artbo
 import org.firstinspires.ftc.teamcode.util.Prism.GoBildaPrismDriver;
 
 import dev.nextftc.ftc.ActiveOpMode;
+
 
 public final class LightingController {
     private static LightingController instance;
@@ -20,9 +22,11 @@ public final class LightingController {
     }
 
     public static void init() {
-        if (instance == null) {
-            instance = new LightingController();
-        }
+        instance = new LightingController();
+    }
+
+    public static LightingController get() {
+        return instance;
     }
 
 
@@ -35,16 +39,9 @@ public final class LightingController {
         }
     }
 
-    public static LightingController get() {
-        if (instance == null) {
-            instance = new LightingController();
-        }
-        return instance;
-    }
-
     private GoBildaPrismDriver.Artboard resolve() {
         if (hasThreeBalls) {
-            return Artboard.ARTBOARD_1;
+            return Artboard.ARTBOARD_2;
         }
         return Artboard.ARTBOARD_0;
     }
@@ -57,3 +54,4 @@ public final class LightingController {
         return prism;
     }
 }
+

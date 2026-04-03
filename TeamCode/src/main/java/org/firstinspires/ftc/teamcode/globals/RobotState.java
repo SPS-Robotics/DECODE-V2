@@ -31,7 +31,11 @@ public class RobotState {
     public static Pose GOAL_POSE = new Pose(2, 133);
     public static Pose LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
     public static Pose AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
-    public static double GATE_HEADING = Math.toRadians(140);
+
+    public static double AUTO_END_X = 17.5;
+    public static double AUTO_END_Y = 120;
+    public static double AUTO_END_HEADING = Math.toRadians(324);
+    public static double GATE_HEADING = Math.toRadians(152);
     public static double PARK_HEADING = Math.toRadians(225);
 
     public static double TURRET_END_POS = 0;
@@ -73,7 +77,10 @@ public class RobotState {
             GOAL_POSE = new Pose(2, 133);
             LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
             AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
-            GATE_HEADING = Math.toRadians(140);
+            AUTO_END_X = 17.5;
+            AUTO_END_Y = 120;
+            AUTO_END_HEADING = Math.toRadians(324);
+            GATE_HEADING = Math.toRadians(152);
             PARK_HEADING = Math.toRadians(225);
         }
 
@@ -81,7 +88,10 @@ public class RobotState {
             GOAL_POSE = new Pose(141.5 - 2, 133);
             LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180)).mirror();
             AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324)).mirror();
-            GATE_HEADING = Math.toRadians(40);
+            AUTO_END_X = 141.5-17.5;
+            AUTO_END_Y = 120;
+            AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(324));
+            GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(-62));
             PARK_HEADING = Math.toRadians(315);
         }
     }

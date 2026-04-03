@@ -7,11 +7,11 @@ import dev.nextftc.control.feedback.PIDCoefficients;
 @Configurable
 public class Constants {
     public static class Turret {
-        public static double ticksPerRevolution = 28.0 * 18.9; // Motor Encoder Calculation Required
-        public static double pulleyRatio = 107.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
+        public static double ticksPerRevolution = 28.0 * 68.0 / 13.0; // Motor Encoder Calculation Required
+        public static double pulleyRatio = 108.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -672;
-        public static double MAX_TICKS = 875;
+        public static double MIN_TICKS = -300;
+        public static double MAX_TICKS = 300;
 
         public static double kP = 0.008;
         public static double kI = 0;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.tuning;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
@@ -32,6 +33,7 @@ import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name="TUNING - Flywheel")
+@Disabled
 public class FlywheelTuning extends NextFTCOpMode {
     public FlywheelTuning() {
         addComponents(

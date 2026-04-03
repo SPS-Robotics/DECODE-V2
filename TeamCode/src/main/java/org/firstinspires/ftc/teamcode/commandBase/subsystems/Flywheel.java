@@ -26,8 +26,8 @@ public class Flywheel implements Subsystem {
     private Flywheel() { }
 
     private final MotorGroup flywheelMotors = new MotorGroup(
-            new MotorEx("flywheelMotor1").floatMode(),
-            new MotorEx("flywheelMotor2").reversed().floatMode()
+            new MotorEx("flywheelMotor1").reversed().floatMode(),
+            new MotorEx("flywheelMotor2").floatMode()
     );
 
     private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
@@ -48,7 +48,7 @@ public class Flywheel implements Subsystem {
     public void periodic() {
         Pose robotPose = PedroComponent.follower().getPose();
 
-        double distance = robotPose.distanceFrom(RobotState.velocityCompensate(RobotState.GOAL_POSE));
+        double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
 
         hoodServo.setPosition(RobotState.hoodLUT.get(distance));
         controller.setGoal(new KineticState(0, RobotState.velocityLUT.get(distance), 0));

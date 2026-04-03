@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commandBase.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.util.LightingController;
 import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import dev.nextftc.core.commands.Command;
@@ -34,7 +35,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Lift.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Lift.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
 
@@ -146,8 +147,8 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
                         new FollowPath(scorePreload),
                         Flywheel.INSTANCE.turnFlywheelOn,
                         new SequentialGroup(
-                                new Delay(0.8),
-                                Turret.INSTANCE.enableTracking
+                                new Delay(0.8)
+                                //Turret.INSTANCE.enableTracking
                         )),
 
 
@@ -191,11 +192,13 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         initPoses();
         buildPaths();
         follower().setStartingPose(startPose);
+        LightingController.init();
     }
 
     @Override
     public void onWaitForStart() {
         telemetry.addData("Alliance Colour", RobotState.ALLIANCE_COLOR);
+        LightingController.get().update();
     }
 
     @Override
@@ -208,18 +211,22 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
     public void onUpdate() {
         Pose robotPose = follower().getPose();
         RobotState.AUTO_END_POSE = robotPose;
-        RobotState.TURRET_END_POS = Turret.INSTANCE.getTurretPosition();
+        RobotState.AUTO_END_X = robotPose.getX();
+        RobotState.AUTO_END_Y = robotPose.getY();
+        RobotState.AUTO_END_HEADING = robotPose.getHeading();
+        //RobotState.TURRET_END_POS = Turret.INSTANCE.getTurretPosition();
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());
         telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
         telemetry.update();
+        LightingController.get().update();
     }
 
     @Override
     public void onStop() {
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
-        Turret.INSTANCE.disableTracking.schedule();
+        //Turret.INSTANCE.disableTracking.schedule();
     }
 }
