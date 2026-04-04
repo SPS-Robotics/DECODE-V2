@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto.paths;
 
 import static org.firstinspires.ftc.teamcode.globals.Constants.Auto.SHOOT_TIME;
+
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.pedropathing.geometry.BezierCurve;
@@ -19,7 +20,9 @@ import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -28,10 +31,10 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-public abstract class ThreeSpike12 extends NextFTCOpMode {
+public abstract class CloseGate15 extends NextFTCOpMode {
     protected final RobotState.AllianceColor alliance;
 
-    public ThreeSpike12(RobotState.AllianceColor alliance) {
+    public CloseGate15(RobotState.AllianceColor alliance) {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
@@ -43,88 +46,79 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
     }
 
     private Pose startPose = new Pose(17.5, 120, Math.toRadians(324));
-    private Pose scorePose = new Pose(41.2, 96.3, Math.toRadians(260));
+    private Pose preloadScorePose = new Pose(48, 96.3, Math.toRadians(270));
 
-    private double closeStartHeading = Math.toRadians(220);
-    private Pose closeSpikePose = new Pose(21, 84, Math.toRadians(180));
-    private Pose closeSpikeControl = new Pose(67.8, 82);
+    private Pose middleSpikePose = new Pose(20.8, 59.9);
+    private Pose middleSpikeControl = new Pose(48, 59.9);
 
-    private double middleStartHeading = Math.toRadians(288);
-    private Pose middleSpikePose = new Pose(20.8, 57.9, Math.toRadians(180));
-    private Pose middleSpikeControl = new Pose(53.2, 58.4);
-    private double middleScoreHeading = Math.toRadians(240);
+    private Pose scorePose = new Pose(57.5, 86.7);
 
-    private Pose gateOpenPose = new Pose(24.5, 70, Math.toRadians(180));
-    private Pose gateOpenControl = new Pose(36.1, 75.5);
+    private double gateIntakeStartHeading = Math.toRadians(225);
 
-    private double farStartHeading = Math.toRadians(280);
-    private Pose farSpikePose = new Pose(20.7, 35, Math.toRadians(180));
-    private Pose farSpikeControl = new Pose(52.5, 31);
+    private Pose gateIntakePose = new Pose(14, 59, Math.toRadians(145));
+    private Pose gateIntakeControl = new Pose (48, 59);
 
-    private double lastStartHeading = Math.toRadians(250);
-    private Pose lastScorePose = new Pose(54.4, 124.6, Math.toRadians(280));
+    private Pose gateScoreControl = new Pose(21, 50.5);
+
+    private Pose closeSpikePose = new Pose(24, 84);
+    private Pose lastScorePose = new Pose(52, 111.4);
 
     private void initPoses() {
         if (alliance == RobotState.AllianceColor.RED) {
             startPose = startPose.mirror();
-            scorePose = scorePose.mirror();
-
-            closeStartHeading = MathUtils.mirrorHeading(closeStartHeading);
-            closeSpikePose = closeSpikePose.mirror();
-            closeSpikeControl = closeSpikeControl.mirror();
-
-            middleStartHeading = MathUtils.mirrorHeading(middleStartHeading);
+            preloadScorePose = preloadScorePose.mirror();
             middleSpikePose = middleSpikePose.mirror();
             middleSpikeControl = middleSpikeControl.mirror();
-            middleScoreHeading = MathUtils.mirrorHeading(middleScoreHeading);
-
-            gateOpenPose = gateOpenPose.mirror();
-            gateOpenControl = gateOpenControl.mirror();
-
-            farStartHeading = MathUtils.mirrorHeading(farStartHeading);
-            farSpikePose = farSpikePose.mirror();
-            farSpikeControl = farSpikeControl.mirror();
-
-            lastStartHeading = MathUtils.mirrorHeading(lastStartHeading);
+            scorePose = scorePose.mirror();
+            gateIntakeStartHeading = MathUtils.mirrorHeading(gateIntakeStartHeading);
+            gateIntakePose = gateIntakePose.mirror();
+            gateIntakeControl = gateIntakeControl.mirror();
+            gateScoreControl = gateScoreControl.mirror();
+            closeSpikePose = closeSpikePose.mirror();
             lastScorePose = lastScorePose.mirror();
         }
     }
 
-    private PathChain scorePreload, intakeCloseSpike, openGate, scoreCloseSpike, intakeMiddleSpike, scoreMiddleSpike, intakeFarSpike, scoreLastSpike;
-
+    private PathChain scorePreload, intakeMiddleSpike, scoreMiddleSpike, gateIntake, scoreGate, intakeCloseSpike, scoreLastSpike;
     private void buildPaths() {
         scorePreload = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(startPose, preloadScorePose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), preloadScorePose.getHeading())
                 .build();
-        intakeCloseSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(scorePose, closeSpikeControl, closeSpikePose))
-                .setLinearHeadingInterpolation(closeStartHeading, closeSpikePose.getHeading())
-                .build();
-        openGate = follower().pathBuilder()
-                .addPath(new BezierCurve(closeSpikePose, gateOpenControl, gateOpenPose))
-                .setConstantHeadingInterpolation(gateOpenPose.getHeading())
-                .build();
-        scoreCloseSpike = follower().pathBuilder()
-                .addPath(new BezierLine(gateOpenPose, scorePose))
-                .setLinearHeadingInterpolation(gateOpenPose.getHeading(), scorePose.getHeading())
-                .build();
+
         intakeMiddleSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(scorePose, middleSpikeControl, middleSpikePose))
-                .setLinearHeadingInterpolation(middleStartHeading, middleSpikePose.getHeading())
+                .addPath(new BezierCurve(preloadScorePose, middleSpikeControl, middleSpikePose))
+                .setTangentHeadingInterpolation()
                 .build();
+
         scoreMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierLine(middleSpikePose, scorePose))
-                .setLinearHeadingInterpolation(middleScoreHeading, scorePose.getHeading())
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
-        intakeFarSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(scorePose, farSpikeControl, farSpikePose))
-                .setLinearHeadingInterpolation(farStartHeading, farSpikePose.getHeading())
+
+        gateIntake = follower().pathBuilder()
+                .addPath(new BezierCurve(scorePose, gateIntakeControl, gateIntakePose))
+                .setLinearHeadingInterpolation(gateIntakeStartHeading, gateIntakePose.getHeading())
                 .build();
+
+        scoreGate = follower().pathBuilder()
+                .addPath(new BezierCurve(gateIntakePose, gateScoreControl, scorePose))
+                .setTangentHeadingInterpolation()
+                .setReversed()
+                .build();
+
+        intakeCloseSpike = follower().pathBuilder()
+                .addPath(new BezierLine(scorePose, closeSpikePose))
+                .setTangentHeadingInterpolation()
+                .build();
+
         scoreLastSpike = follower().pathBuilder()
-                .addPath(new BezierLine(farSpikePose, lastScorePose))
-                .setLinearHeadingInterpolation(lastStartHeading, lastScorePose.getHeading())
+                .addPath(new BezierLine(closeSpikePose, lastScorePose))
+                .setTangentHeadingInterpolation()
+                .setReversed()
                 .build();
+
     }
 
     private Command shootArtifacts() {
@@ -143,6 +137,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         return new SequentialGroup(
+                // Score Preload
                 new ParallelGroup(
                         new FollowPath(scorePreload),
                         Flywheel.INSTANCE.turnFlywheelOn,
@@ -154,34 +149,48 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
 
                 shootArtifacts(),
 
-                // Intake Close Spike + Open Gate
-                Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(intakeCloseSpike),
-                Intake.INSTANCE.stopIntake,
-                new FollowPath(openGate),
-
-                // Drive to scorePose
-                new FollowPath(scoreCloseSpike),
-                shootArtifacts(),
-
                 // Intake Middle Spike
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeMiddleSpike),
-
-                // Drive to scorePose
                 Intake.INSTANCE.stopIntake,
-                new FollowPath(scoreMiddleSpike),
 
+                // Score Middle Spike
+                new FollowPath(scoreMiddleSpike),
                 shootArtifacts(),
 
-                // Intake Far Spike
+                // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(intakeFarSpike),
-
-                // Drive to lastScorePose
+                new FollowPath(gateIntake),
+                new ParallelRaceGroup(
+                        new Delay(2),
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                ),
                 Intake.INSTANCE.stopIntake,
-                new FollowPath(scoreLastSpike),
 
+                // Score Gate
+                new FollowPath(scoreGate),
+                shootArtifacts(),
+
+                // Gate Intake
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(gateIntake),
+                new ParallelRaceGroup(
+                        new Delay(2),
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                ),
+                Intake.INSTANCE.stopIntake,
+
+                // Score Gate
+                new FollowPath(scoreGate),
+                shootArtifacts(),
+
+                // Intake Close Spike
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(intakeCloseSpike),
+                Intake.INSTANCE.stopIntake,
+
+                // Score Close Spike
+                new FollowPath(scoreLastSpike),
                 shootArtifacts()
         );
     }
@@ -193,12 +202,6 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         LightingController.init();
-    }
-
-    @Override
-    public void onWaitForStart() {
-        telemetry.addData("Alliance Colour", RobotState.ALLIANCE_COLOR);
-        LightingController.get().update();
     }
 
     @Override
