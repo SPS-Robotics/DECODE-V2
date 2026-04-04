@@ -31,10 +31,12 @@ public class Turret implements Subsystem {
             .posPid(Constants.Turret.kP, Constants.Turret.kI, Constants.Turret.kD)
             .build();
 
-    private final MotorEx turretRotator = new MotorEx("turretRotator").zeroed().brakeMode();
+    private final MotorEx turretRotator = new MotorEx("turretRotator").brakeMode();
 
     //private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
     private boolean turretTracking = false;
+
+    private boolean aimZero = false;
 
     public double getTurretPosition() {
         return turretRotator.getCurrentPosition();
@@ -54,6 +56,9 @@ public class Turret implements Subsystem {
     public Command enableTracking = new InstantCommand(() -> turretTracking = true);
     public Command disableTracking = new InstantCommand(() -> turretTracking = false);
 
+    public Command zeroTurret = new InstantCommand(() -> aimZero = true);
+    public Command unZeroTurret = new InstantCommand(() -> aimZero = false);
+
     public Command setTurretPosition(double pos) {
         return new InstantCommand(() -> turretRotator.setCurrentPosition(pos));
     }
@@ -61,21 +66,22 @@ public class Turret implements Subsystem {
     @Override
     public void periodic() {
         //if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
-
-        double targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
+        double targetPos;
+        if (!aimZero) targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
+        else targetPos = 0;
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
 
         double power;
-        if (!turretTracking) power = 0;
-        else power = controller.calculate(turretRotator.getState());
+        power = controller.calculate(turretRotator.getState());
 
-        //power += PedroComponent.follower().getAngularVelocity() * Constants.Turret.angularVelocitykV;
+        power += -PedroComponent.follower().getAngularVelocity() * Constants.Turret.angularVelocitykV;
+
+        if (!turretTracking) power = 0;
 
         turretRotator.setPower(power);
 
         ActiveOpMode.telemetry().addData("TurretPos", turretRotator.getCurrentPosition());
         ActiveOpMode.telemetry().addData("TurretTarget", targetPos);
-
     }
 }

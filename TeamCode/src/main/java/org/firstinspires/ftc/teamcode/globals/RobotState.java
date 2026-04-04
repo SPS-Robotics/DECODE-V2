@@ -42,13 +42,13 @@ public class RobotState {
 
     
     public static final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641), // Distance
-            Arrays.asList(1250.0, 1250.0, 1350.0, 1400.0, 1450.0, 1450.0, 1500.0, 1600.0) // Flywheel RPM
+            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 135.4035, 144.2914), // Distance
+            Arrays.asList(1340.0, 1520.0, 1480.0, 1540.0, 1620.0, 1620.0, 1640.0, 1700.0, 1840.0, 2040.0, 2160.0) // Flywheel RPM
     ).createLUT();
 
     public static final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641),
-            Arrays.asList(0.32, 0.30, 0.24, 0.20, 0.34, 0.20, 0.26, 0.18)
+            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 135.4035, 144.2914),
+            Arrays.asList(0.64, 0.58, 0.50, 0.48, 0.36, 0.34, 0.32, 0.30, 0.24, 0.20, 0.20)
     ).createLUT();
 
     public static final InterpLUT tofLUT = new InterpLUT(

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Drawing;
+import org.firstinspires.ftc.teamcode.util.LightingController;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -33,7 +34,6 @@ import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name="TUNING - Flywheel")
-@Disabled
 public class FlywheelTuning extends NextFTCOpMode {
     public FlywheelTuning() {
         addComponents(
@@ -50,14 +50,28 @@ public class FlywheelTuning extends NextFTCOpMode {
     int flywheelIncrementIndex = 0;
 
     @Override
-    public void onInit() { }
+    public void onInit() {
+        Turret.INSTANCE.disableTracking.schedule();
+        TuningFlywheel.INSTANCE.turnOff.schedule();
+        LightingController.init();
+        PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
+    }
 
     @Override
     public void onWaitForStart() {
-        PedroComponent.follower().setPose(RobotState.AUTO_END_POSE);
         Gamepads.gamepad1().rightStickX();
-    }
+        //PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
 
+        LightingController.get().update();
+        Pose robotPose = PedroComponent.follower().getPose();
+        telemetry.addData("Robot X", robotPose.getX());
+        telemetry.addData("Robot Y", robotPose.getY());
+        telemetry.addData("Robot Heading", robotPose.getHeading());
+        telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
+        telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
+        telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.update();
+    }
     @Override
     public void onStartButtonPressed() {
         Command driverControlled;
@@ -91,9 +105,9 @@ public class FlywheelTuning extends NextFTCOpMode {
                         new InstantCommand(() -> hoodPos -= 0.02))
                 );
         Gamepads.gamepad1().dpadRight()
-                .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(flywheelIncrements[flywheelIncrementIndex]));
+                .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(20));
         Gamepads.gamepad1().dpadLeft()
-                .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(-flywheelIncrements[flywheelIncrementIndex]));
+                .whenBecomesTrue(TuningFlywheel.INSTANCE.moveFlywheelByValue(-20));
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.05)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -126,16 +140,20 @@ public class FlywheelTuning extends NextFTCOpMode {
     }
     @Override
     public void onUpdate() {
+        LightingController.get().update();
+
         Pose robotPose = follower().getPose();
+
         TuningFlywheel.INSTANCE.hoodServo.setPosition(hoodPos);
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());
         telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
         telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
         telemetry.update();
-        drawOnlyCurrent();
+        //drawOnlyCurrent();
     }
 
     @Override

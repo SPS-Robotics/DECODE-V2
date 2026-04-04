@@ -41,7 +41,7 @@ public class Intake implements Subsystem {
 
     @Override
     public void initialize() {
-        intakeMotor.getMotor().setCurrentAlert(4500, CurrentUnit.MILLIAMPS);
+        intakeMotor.getMotor().setCurrentAlert(4300, CurrentUnit.MILLIAMPS);
     }
 
     @Override

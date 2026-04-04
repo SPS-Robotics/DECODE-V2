@@ -87,6 +87,10 @@ public class Drawing {
         drawRobot(pose, robotLook);
     }
 
+    public static void drawLL(Pose pose) {
+        drawRobot(pose, historyLook);
+    }
+
     /**
      * This draws a Path with a specified look.
      *

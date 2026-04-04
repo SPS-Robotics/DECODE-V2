@@ -55,7 +55,7 @@ public class MainTeleOp extends NextFTCOpMode {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE, Flywheel.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Turret.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
     }
@@ -70,7 +70,7 @@ public class MainTeleOp extends NextFTCOpMode {
 
     ControlSystem controller = ControlSystem.builder()
             .angular(AngleType.RADIANS,
-                    feedback -> feedback.posPid(0.807, 0, 0.001)
+                    feedback -> feedback.posPid(0.9, 0, 0.001)
             ).build();
 
     @Override
@@ -78,12 +78,13 @@ public class MainTeleOp extends NextFTCOpMode {
         Turret.INSTANCE.disableTracking.schedule();
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
         LightingController.init();
+        PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
     }
 
     @Override
     public void onWaitForStart() {
         Gamepads.gamepad1().rightStickX();
-        PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
+        //PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
 
         LightingController.get().update();
         Pose robotPose = PedroComponent.follower().getPose();
@@ -168,43 +169,39 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         //Drive Controls
-        Gamepads.gamepad1().rightStickX().greaterThan(0.05).and(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
+        Gamepads.gamepad1().rightStickX().greaterThan(0.05).or(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
                 .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
 
         Gamepads.gamepad1().leftBumper()
-                .whenBecomesTrue(() -> scalar = 0.2)
+                .whenBecomesTrue(() -> scalar = 0.3)
                 .whenBecomesFalse(() -> scalar = 1);
 
-        Gamepads.gamepad1().dpadDown()
+        Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> {
                     headingMode = HeadingMode.ABSOLUTE;
                     targetHeading = RobotState.GATE_HEADING;
                 });
 
-        Gamepads.gamepad1().dpadUp()
+        Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(() -> {
                     headingMode = HeadingMode.ABSOLUTE;
                     targetHeading = RobotState.PARK_HEADING;
                 });
 
-        /*
 
         Gamepads.gamepad1().square()
                 .whenBecomesTrue(new SequentialGroup(
                         new InstantCommand(() -> PedroComponent.follower().breakFollowing()),
                         new InstantCommand(driverControlled::cancel),
+                        Turret.INSTANCE.zeroTurret,
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
 
-         */
-        /*
 
         // Debug Controls
         Gamepads.gamepad2().circle()
                 .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
-
-         */
 
         Gamepads.gamepad2().square()
                 .whenBecomesTrue(() -> PedroComponent.follower().setPose(RobotState.LOADING_ZONE));
@@ -222,19 +219,19 @@ public class MainTeleOp extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         driverControlled.setScalar(scalar);
+        controller.setGoal(new KineticState(targetHeading));
 
         LightingController.get().update();
 
         Pose robotPose = follower().getPose();
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());
-        telemetry.addData("Robot Heading", robotPose.getHeading());
+        telemetry.addData("Robot Heading", Math.toDegrees(robotPose.getHeading()));
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
-        telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
         telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
         telemetry.update();
-        //drawOnlyCurrent();
+        drawOnlyCurrent();
     }
 
     @Override

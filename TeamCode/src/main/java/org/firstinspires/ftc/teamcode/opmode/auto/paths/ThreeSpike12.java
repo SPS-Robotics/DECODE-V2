@@ -35,7 +35,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         addComponents(
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
-                new SubsystemComponent(Lift.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE),
+                new SubsystemComponent(Lift.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE, Turret.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
 
@@ -46,15 +46,15 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
     private Pose scorePose = new Pose(41.2, 96.3, Math.toRadians(260));
 
     private double closeStartHeading = Math.toRadians(220);
-    private Pose closeSpikePose = new Pose(20, 84, Math.toRadians(180));
-    private Pose closeSpikeControl = new Pose(57.8, 82);
+    private Pose closeSpikePose = new Pose(21, 84, Math.toRadians(180));
+    private Pose closeSpikeControl = new Pose(67.8, 82);
 
     private double middleStartHeading = Math.toRadians(288);
-    private Pose middleSpikePose = new Pose(18.8, 59.9, Math.toRadians(180));
+    private Pose middleSpikePose = new Pose(20.8, 57.9, Math.toRadians(180));
     private Pose middleSpikeControl = new Pose(53.2, 58.4);
     private double middleScoreHeading = Math.toRadians(240);
 
-    private Pose gateOpenPose = new Pose(22.7, 70, Math.toRadians(180));
+    private Pose gateOpenPose = new Pose(24.5, 70, Math.toRadians(180));
     private Pose gateOpenControl = new Pose(36.1, 75.5);
 
     private double farStartHeading = Math.toRadians(280);
@@ -147,8 +147,8 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
                         new FollowPath(scorePreload),
                         Flywheel.INSTANCE.turnFlywheelOn,
                         new SequentialGroup(
-                                new Delay(0.8)
-                                //Turret.INSTANCE.enableTracking
+                                new Delay(0.3),
+                                Turret.INSTANCE.enableTracking
                         )),
 
 
@@ -214,7 +214,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         RobotState.AUTO_END_X = robotPose.getX();
         RobotState.AUTO_END_Y = robotPose.getY();
         RobotState.AUTO_END_HEADING = robotPose.getHeading();
-        //RobotState.TURRET_END_POS = Turret.INSTANCE.getTurretPosition();
+        RobotState.TURRET_END_POS = Turret.INSTANCE.getTurretPosition();
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());
         telemetry.addData("Robot Heading", robotPose.getHeading());
@@ -227,6 +227,6 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
     @Override
     public void onStop() {
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
-        //Turret.INSTANCE.disableTracking.schedule();
+        Turret.INSTANCE.disableTracking.schedule();
     }
 }

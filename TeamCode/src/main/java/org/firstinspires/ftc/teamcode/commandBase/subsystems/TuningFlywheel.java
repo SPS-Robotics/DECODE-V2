@@ -18,15 +18,15 @@ public class TuningFlywheel implements Subsystem {
     private TuningFlywheel() { }
 
     private final MotorGroup flywheelMotors = new MotorGroup(
-            new MotorEx("flywheelMotor1").floatMode(),
-            new MotorEx("flywheelMotor2").reversed().floatMode()
+            new MotorEx("flywheelMotor1").reversed().floatMode(),
+            new MotorEx("flywheelMotor2").floatMode()
     );
 
     public ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     ControlSystem controller = ControlSystem.builder()
-            .velPid(0.0008,0,0)
-            .basicFF(0.00051,0,0.06)
+            .velPid(0.0014,0,0)
+            .basicFF(0.000379,0,0.05)
             .build();
 
     double power;

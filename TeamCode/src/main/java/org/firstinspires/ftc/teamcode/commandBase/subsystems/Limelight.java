@@ -82,6 +82,8 @@ public class Limelight implements Subsystem {
         ll.start();
     }
 
+    public Pose latest = new Pose();
+
     @Override
     public void periodic() {
         if (tryRelocalise) {
@@ -98,13 +100,16 @@ public class Limelight implements Subsystem {
             relocalisationPoses.add(convertLLToPose(limelightPose));
         }
 
-        if (relocalisationPoses.size() >= 20) {
+        if (relocalisationPoses.size() >= 50) {
             tryRelocalise = false;
             List<Pose> filteredPoses = filterPoses(relocalisationPoses);
 
-            if (!filteredPoses.isEmpty()) PedroComponent.follower().setPose(averagePoses(filteredPoses));
+            latest = averagePoses(filteredPoses);
+
+            if (!filteredPoses.isEmpty()) PedroComponent.follower().setPose(latest);
 
             relocalisationPoses.clear();
         }
+
     }
 }

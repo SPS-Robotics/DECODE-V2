@@ -10,38 +10,38 @@ public class Constants {
         public static double ticksPerRevolution = 28.0 * 68.0 / 13.0; // Motor Encoder Calculation Required
         public static double pulleyRatio = 108.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -300;
-        public static double MAX_TICKS = 300;
+        public static double MIN_TICKS = -240;
+        public static double MAX_TICKS = 240;
 
-        public static double kP = 0.008;
+        public static double kP = 0.01;
         public static double kI = 0;
-        public static double kD = 0.0001;
+        public static double kD = 0.0005;
 
         public static double RELOC_POS = 0;
 
         public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
 
-        public static double angularVelocitykV = 0.0001;
+        public static double angularVelocitykV = 0.1;
     }
 
     public static class Intake {
         public static double INTAKE_POWER = 1;
         public static double OUTTAKE_POWER = -0.4;
 
-        public static double GATE_OPEN = 1;
-        public static double GATE_CLOSE = 0;
+        public static double GATE_OPEN = 0.95;
+        public static double GATE_CLOSE = 0.2;
 
-        public static double GATE_OPEN_TIME = 0.6;
+        public static double GATE_OPEN_TIME = 0.8;
     }
 
     public static class Flywheel {
-        public static double kP = 0.001;
+        public static double kP = 0.0014;
         public static double kI = 0;
         public static double kD = 0;
 
-        public static double kV = 0.00051;
+        public static double kV = 0.000379;
         public static double kA = 0;
-        public static double kS = 0.06;
+        public static double kS = 0.05;
 
         // hood servo top = 0.16, hood servo bottom = 0.68
     }
@@ -60,7 +60,7 @@ public class Constants {
     }
 
     public static class Auto {
-        public static double SHOOT_TIME = 1.5;
+        public static double SHOOT_TIME = 0.67;
         public static double GATE_DELAY = 3;
     }
 
