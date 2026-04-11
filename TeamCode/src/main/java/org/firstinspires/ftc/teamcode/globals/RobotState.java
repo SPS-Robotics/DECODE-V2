@@ -29,7 +29,8 @@ public class RobotState {
 
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
     public static Pose GOAL_POSE = new Pose(2, 133);
-    public static Pose LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
+    public static Pose LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
+
     public static Pose AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
 
     public static double AUTO_END_X = 14.0;
