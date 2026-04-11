@@ -172,11 +172,12 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().rightStickX().greaterThan(0.05).or(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
                 .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
 
-        Gamepads.gamepad1().leftBumper()
+        Gamepads.gamepad1().dpadUp()
+                .toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> scalar = 0.3)
                 .whenBecomesFalse(() -> scalar = 1);
 
-        Gamepads.gamepad1().dpadUp()
+        Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> {
                     headingMode = HeadingMode.ABSOLUTE;
                     targetHeading = RobotState.GATE_HEADING;

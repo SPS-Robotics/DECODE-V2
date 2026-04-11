@@ -7,6 +7,7 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
@@ -99,7 +100,20 @@ public abstract class CloseGate15 extends NextFTCOpMode {
 
         gateIntake = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, gateIntakeControl, gateIntakePose))
-                .setLinearHeadingInterpolation(gateIntakeStartHeading, gateIntakePose.getHeading())
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(
+                                        0,
+                                        0.7,
+                                        HeadingInterpolator.linear(gateIntakeStartHeading, gateIntakePose.getHeading())
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(
+                                        0.7,
+                                        1,
+                                        HeadingInterpolator.constant(gateIntakePose.getHeading())
+                                )
+                        )
+                )
                 .build();
 
         scoreGate = follower().pathBuilder()

@@ -75,7 +75,7 @@ public class RobotState {
 
         if (alliance == AllianceColor.BLUE) {
             GOAL_POSE = new Pose(2, 133);
-            LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
+            LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
             AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
             AUTO_END_X = 14.0;
             AUTO_END_Y = 112.093;
@@ -86,7 +86,7 @@ public class RobotState {
 
         if (alliance == AllianceColor.RED) {
             GOAL_POSE = new Pose(141.5 - 2, 133);
-            LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180)).mirror();
+            LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0)).mirror();
             AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270)).mirror();
             AUTO_END_X = 141.5-14.0;
             AUTO_END_Y = 112.093;
