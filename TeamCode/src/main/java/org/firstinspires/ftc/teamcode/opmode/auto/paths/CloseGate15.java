@@ -45,17 +45,17 @@ public abstract class CloseGate15 extends NextFTCOpMode {
         this.alliance = alliance;
     }
 
-    private Pose startPose = new Pose(17.5, 120, Math.toRadians(324));
+    private Pose startPose = new Pose(14.0, 112.093, Math.toRadians(270));
     private Pose preloadScorePose = new Pose(48, 96.3, Math.toRadians(270));
 
-    private Pose middleSpikePose = new Pose(20.8, 59.9);
+    private Pose middleSpikePose = new Pose(24, 59.9);
     private Pose middleSpikeControl = new Pose(48, 59.9);
 
     private Pose scorePose = new Pose(57.5, 86.7);
 
     private double gateIntakeStartHeading = Math.toRadians(225);
 
-    private Pose gateIntakePose = new Pose(14, 59, Math.toRadians(145));
+    private Pose gateIntakePose = new Pose(16, 56, Math.toRadians(150));
     private Pose gateIntakeControl = new Pose (48, 59);
 
     private Pose gateScoreControl = new Pose(21, 50.5);
@@ -161,10 +161,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new ParallelRaceGroup(
-                        new Delay(2),
-                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
-                ),
+                new Delay(1.2),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
@@ -174,10 +171,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new ParallelRaceGroup(
-                        new Delay(2),
-                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
-                ),
+                new Delay(1.2),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate

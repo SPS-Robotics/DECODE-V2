@@ -44,15 +44,16 @@ public class FarCycle15 extends NextFTCOpMode {
     }
 
     private double constantHeading = Math.toRadians(180);
-    private double intakeX = 12.8;
+    private final double intakeX = 10;
 
-    private Pose startPose = new Pose(57, 8, constantHeading);
-    private Pose cornerIntakePose = new Pose(intakeX, 10.6);
-    private Pose scorePose = new Pose(48, 10.6);
+    private Pose startPose = new Pose(55.093, 8, constantHeading);
+    private Pose cornerIntakePose = new Pose(intakeX, 9);
+    private Pose scorePose = new Pose(48, 9);
     private Pose farSpikePose = new Pose(20.8, 36);
     private Pose farSpikeControl = new Pose(56, 36);
-    private Pose sweepIntakePose = new Pose(intakeX, 30);
-    private Pose sweepIntakeControl = new Pose(48, 30);
+    private Pose sweepStartPose = new Pose(intakeX, 30);
+    private Pose sweepStartControl = new Pose(48, 30);
+    private Pose sweepIntakeControl = new Pose(18, 19);
     private void initPoses() {
         if (alliance == RobotState.AllianceColor.RED) {
             constantHeading = MathUtils.mirrorHeading(constantHeading);
@@ -61,12 +62,13 @@ public class FarCycle15 extends NextFTCOpMode {
             scorePose = scorePose.mirror();
             farSpikePose = farSpikePose.mirror();
             farSpikeControl = farSpikeControl.mirror();
-            sweepIntakePose = sweepIntakePose.mirror();
+            sweepStartPose = sweepStartPose.mirror();
+            sweepStartControl = sweepStartControl.mirror();
             sweepIntakeControl = sweepIntakeControl.mirror();
         }
     }
 
-    private PathChain startIntake, intakeCorner, scoreCorner, intakeFarSpike, scoreFarSpike, middleIntake, sweepIntake;
+    private PathChain startIntake, intakeCorner, scoreCorner, intakeFarSpike, scoreFarSpike, sweepStart, sweepIntake;
 
     private void buildPaths() {
         startIntake = follower().pathBuilder()
@@ -89,12 +91,12 @@ public class FarCycle15 extends NextFTCOpMode {
                 .addPath(new BezierLine(farSpikePose, scorePose))
                 .setConstantHeadingInterpolation(constantHeading)
                 .build();
-        middleIntake = follower().pathBuilder()
-                .addPath(new BezierCurve(scorePose, sweepIntakeControl, sweepIntakePose))
+        sweepStart = follower().pathBuilder()
+                .addPath(new BezierCurve(scorePose, sweepStartControl, sweepStartPose))
                 .setConstantHeadingInterpolation(constantHeading)
                 .build();
         sweepIntake = follower().pathBuilder()
-                .addPath(new BezierLine(sweepIntakePose, cornerIntakePose))
+                .addPath(new BezierCurve(sweepStartPose, sweepIntakeControl, cornerIntakePose))
                 .setConstantHeadingInterpolation(constantHeading)
                 .build();
     }
@@ -146,7 +148,7 @@ public class FarCycle15 extends NextFTCOpMode {
 
                 // Sweep Intake
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(middleIntake),
+                new FollowPath(sweepStart),
                 new FollowPath(sweepIntake),
                 Intake.INSTANCE.stopIntake,
 

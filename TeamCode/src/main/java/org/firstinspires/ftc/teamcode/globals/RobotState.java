@@ -30,11 +30,11 @@ public class RobotState {
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
     public static Pose GOAL_POSE = new Pose(2, 133);
     public static Pose LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
-    public static Pose AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
+    public static Pose AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
 
-    public static double AUTO_END_X = 17.5;
-    public static double AUTO_END_Y = 120;
-    public static double AUTO_END_HEADING = Math.toRadians(324);
+    public static double AUTO_END_X = 14.0;
+    public static double AUTO_END_Y = 112.093;
+    public static double AUTO_END_HEADING = Math.toRadians(270);
     public static double GATE_HEADING = Math.toRadians(152);
     public static double PARK_HEADING = Math.toRadians(225);
 
@@ -42,13 +42,13 @@ public class RobotState {
 
     
     public static final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 135.4035, 144.2914), // Distance
-            Arrays.asList(1340.0, 1520.0, 1480.0, 1540.0, 1620.0, 1620.0, 1640.0, 1700.0, 1840.0, 2040.0, 2160.0) // Flywheel RPM
+            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 69.9892, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 132.8782, 135.4035, 144.2914), // Distance
+            Arrays.asList(1340.0, 1520.0, 1480.0, 1540.0, 1560.0, 1620.0, 1620.0, 1640.0, 1700.0, 1840.0, 2060.0, 2040.0, 2160.0) // Flywheel RPM
     ).createLUT();
 
     public static final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 135.4035, 144.2914),
-            Arrays.asList(0.64, 0.58, 0.50, 0.48, 0.36, 0.34, 0.32, 0.30, 0.24, 0.20, 0.20)
+            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 69.9892, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 132.8782, 135.4035, 144.2914),
+            Arrays.asList(0.64, 0.58, 0.50, 0.48, 0.34, 0.36, 0.34, 0.32, 0.30, 0.24, 0.28, 0.20, 0.20)
     ).createLUT();
 
     public static final InterpLUT tofLUT = new InterpLUT(
@@ -76,10 +76,10 @@ public class RobotState {
         if (alliance == AllianceColor.BLUE) {
             GOAL_POSE = new Pose(2, 133);
             LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180));
-            AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324));
-            AUTO_END_X = 17.5;
-            AUTO_END_Y = 120;
-            AUTO_END_HEADING = Math.toRadians(324);
+            AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
+            AUTO_END_X = 14.0;
+            AUTO_END_Y = 112.093;
+            AUTO_END_HEADING = Math.toRadians(270);
             GATE_HEADING = Math.toRadians(152);
             PARK_HEADING = Math.toRadians(225);
         }
@@ -87,12 +87,12 @@ public class RobotState {
         if (alliance == AllianceColor.RED) {
             GOAL_POSE = new Pose(141.5 - 2, 133);
             LOADING_ZONE = new Pose(141.5 - 7.95276, 6.90691968504, Math.toRadians(180)).mirror();
-            AUTO_END_POSE = new Pose(17.5, 120, Math.toRadians(324)).mirror();
-            AUTO_END_X = 141.5-17.5;
-            AUTO_END_Y = 120;
-            AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(324));
-            GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(-62));
-            PARK_HEADING = Math.toRadians(315);
+            AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270)).mirror();
+            AUTO_END_X = 141.5-14.0;
+            AUTO_END_Y = 112.093;
+            AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(270));
+            GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(152));
+            PARK_HEADING = MathUtils.mirrorHeading(Math.toRadians(225));
         }
     }
 }

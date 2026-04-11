@@ -44,7 +44,7 @@ public class Lift implements Subsystem {
 
     public Command engageClutch = new ParallelGroup(
             new SetPower(backMotors, Constants.Lift.ENGAGING_POWER),
-            new SetPower(frontMotors, -Constants.Lift.ENGAGING_POWER * 1.03)
+            new SetPower(frontMotors, -Constants.Lift.ENGAGING_POWER * 1.05)
     );
 
     public Command startLift = new ParallelGroup(
