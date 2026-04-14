@@ -172,6 +172,8 @@ public class MainTeleOp extends NextFTCOpMode {
         Gamepads.gamepad1().rightStickX().greaterThan(0.05).or(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
                 .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
 
+        //Gamepads.gamepad1().leftStickX().lessThan(0.05).and(Gamepads.gamepad1().leftStickX().greaterThan(-0.05)).and(Gamepads.gamepad1().leftStickY().lessThan(0.05)).and(Gamepads.gamepad1().leftStickY().greaterThan(-0.05))
+
         Gamepads.gamepad1().leftTrigger().greaterThan(0.05)
                 .whenBecomesTrue(() -> scalar = 0.3)
                 .whenBecomesFalse(() -> scalar = 1);
