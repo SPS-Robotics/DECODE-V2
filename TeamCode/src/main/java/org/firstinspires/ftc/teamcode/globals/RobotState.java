@@ -81,7 +81,7 @@ public class RobotState {
             AUTO_END_X = 14.0;
             AUTO_END_Y = 112.093;
             AUTO_END_HEADING = Math.toRadians(270);
-            GATE_HEADING = Math.toRadians(152);
+            GATE_HEADING = Math.toRadians(145);
             PARK_HEADING = Math.toRadians(225);
         }
 
@@ -92,7 +92,7 @@ public class RobotState {
             AUTO_END_X = 141.5-14.0;
             AUTO_END_Y = 112.093;
             AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(270));
-            GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(152));
+            GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(145));
             PARK_HEADING = MathUtils.mirrorHeading(Math.toRadians(225));
         }
     }

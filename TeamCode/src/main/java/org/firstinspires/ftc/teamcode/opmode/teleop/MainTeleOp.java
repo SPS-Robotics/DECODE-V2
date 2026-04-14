@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import com.pedropathing.ftc.drivetrains.Mecanum;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
@@ -62,6 +63,7 @@ public class MainTeleOp extends NextFTCOpMode {
 
     private PedroDriverControlled driverControlled;
     private double scalar = 1;
+    private boolean holdPosition = false;
 
     private HeadingMode headingMode = HeadingMode.GAMEPAD;
     private double targetHeading;
@@ -99,6 +101,7 @@ public class MainTeleOp extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
+        /*
         if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
             driverControlled = new PedroDriverControlled(
                     Gamepads.gamepad1().leftStickY(),
@@ -134,6 +137,9 @@ public class MainTeleOp extends NextFTCOpMode {
         }
 
         driverControlled.schedule();
+         */
+
+        follower().startTeleopDrive(true);
 
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
         Lift.INSTANCE.disengageLift.schedule();
@@ -169,10 +175,20 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         //Drive Controls
-        Gamepads.gamepad1().rightStickX().greaterThan(0.05).or(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
+        Gamepads.gamepad1().rightStickX().inRange(-0.05, 0.05)
                 .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
 
-        //Gamepads.gamepad1().leftStickX().lessThan(0.05).and(Gamepads.gamepad1().leftStickX().greaterThan(-0.05)).and(Gamepads.gamepad1().leftStickY().lessThan(0.05)).and(Gamepads.gamepad1().leftStickY().greaterThan(-0.05))
+        Gamepads.gamepad1().leftStickX().inRange(-0.05, 0.05)
+                .and(Gamepads.gamepad1().leftStickY().inRange(-0.05, 0.05))
+                .and(Gamepads.gamepad1().rightStickX().inRange(-0.05, 0.05))
+                .whenBecomesTrue(() -> {
+                    follower().holdPoint(follower().getPose());
+                    holdPosition = true;
+                })
+                .whenBecomesFalse(() -> {
+                    follower().startTeleopDrive(false);
+                    holdPosition = false;
+                });
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.05)
                 .whenBecomesTrue(() -> scalar = 0.3)
@@ -220,8 +236,21 @@ public class MainTeleOp extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        driverControlled.setScalar(scalar);
+        //driverControlled.setScalar(scalar);
+        // Drivetrain
         controller.setGoal(new KineticState(targetHeading));
+        double headingPower = gamepad1.right_stick_x * -1;
+        if (headingMode == HeadingMode.ABSOLUTE) headingPower = controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+
+        if (!holdPosition) {
+            follower().setTeleOpDrive(
+                    gamepad1.left_stick_y * scalar,
+                    gamepad1.left_stick_x * scalar,
+                    headingPower * scalar,
+                    false,
+                    (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) ? Math.toRadians(180) : 0
+            );
+        }
 
         LightingController.get().update();
 
