@@ -179,7 +179,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(1.2),
+                new ParallelRaceGroup(
+                        new Delay(1.2),
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                ),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
@@ -192,7 +195,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(1.2),
+                new ParallelRaceGroup(
+                        new Delay(1.2),
+                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                ),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
