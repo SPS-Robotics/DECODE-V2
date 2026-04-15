@@ -49,14 +49,14 @@ public abstract class CloseGate15 extends NextFTCOpMode {
     private Pose startPose = new Pose(14.0, 112.093, Math.toRadians(270));
     private Pose preloadScorePose = new Pose(48, 96.3, Math.toRadians(270));
 
-    private Pose middleSpikePose = new Pose(24, 59.9);
-    private Pose middleSpikeControl = new Pose(48, 59.9);
+    private Pose middleSpikePose = new Pose(24, 59.9, Math.toRadians(180));
+    private Pose middleSpikeControl = new Pose(64, 59.9);
 
     private Pose scorePose = new Pose(57.5, 86.7);
 
     private double gateIntakeStartHeading = Math.toRadians(225);
 
-    private Pose gateIntakePose = new Pose(16, 56, Math.toRadians(150));
+    private Pose gateIntakePose = new Pose(11, 58.4, Math.toRadians(156));
     private Pose gateIntakeControl = new Pose (48, 59);
 
     private Pose gateScoreControl = new Pose(21, 50.5);
@@ -89,7 +89,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
 
         intakeMiddleSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(preloadScorePose, middleSpikeControl, middleSpikePose))
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(preloadScorePose.getHeading(), middleSpikePose.getHeading())
                 .build();
 
         scoreMiddleSpike = follower().pathBuilder()
@@ -138,7 +138,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
     private Command shootArtifacts() {
         return new SequentialGroup(
                 new SequentialGroup(
-                        Intake.INSTANCE.openGate,
+                        //Intake.INSTANCE.openGate,
                         Intake.INSTANCE.intakeArtifacts,
                         new Delay(SHOOT_TIME)
                 ),
@@ -155,6 +155,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 new ParallelGroup(
                         new FollowPath(scorePreload),
                         Flywheel.INSTANCE.turnFlywheelOn,
+                        Intake.INSTANCE.openGate,
                         new SequentialGroup(
                                 new Delay(0.3),
                                 Turret.INSTANCE.enableTracking
@@ -169,7 +170,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
 
                 // Score Middle Spike
-                new FollowPath(scoreMiddleSpike),
+                new ParallelGroup(
+                        new FollowPath(scoreMiddleSpike),
+                        Intake.INSTANCE.openGate
+                        ),
                 shootArtifacts(),
 
                 // Gate Intake
@@ -179,7 +183,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
-                new FollowPath(scoreGate),
+                new ParallelGroup(
+                        new FollowPath(scoreGate),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Gate Intake
@@ -189,7 +196,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
-                new FollowPath(scoreGate),
+                new ParallelGroup(
+                        new FollowPath(scoreGate),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Intake Close Spike
@@ -198,7 +208,10 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
 
                 // Score Close Spike
-                new FollowPath(scoreLastSpike),
+                new ParallelGroup(
+                        new FollowPath(scoreLastSpike),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts()
         );
     }

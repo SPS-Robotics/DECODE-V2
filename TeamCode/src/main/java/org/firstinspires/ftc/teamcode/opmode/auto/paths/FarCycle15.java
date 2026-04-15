@@ -44,7 +44,7 @@ public class FarCycle15 extends NextFTCOpMode {
     }
 
     private double constantHeading = Math.toRadians(180);
-    private final double intakeX = 10;
+    private final double intakeX = 12;
 
     private Pose startPose = new Pose(55.093, 8, constantHeading);
     private Pose cornerIntakePose = new Pose(intakeX, 9);

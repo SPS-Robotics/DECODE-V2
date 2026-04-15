@@ -153,7 +153,7 @@ public class FlywheelTuning extends NextFTCOpMode {
         telemetry.addData("TurretOffset", RobotState.TURRET_END_POS);
         telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
         telemetry.update();
-        //drawOnlyCurrent();
+        drawOnlyCurrent();
     }
 
     @Override

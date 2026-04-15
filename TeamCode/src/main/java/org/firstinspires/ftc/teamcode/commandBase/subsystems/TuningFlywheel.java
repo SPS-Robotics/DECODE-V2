@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.commandBase.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.core.commands.Command;
@@ -17,15 +20,17 @@ public class TuningFlywheel implements Subsystem {
     public static final TuningFlywheel INSTANCE = new TuningFlywheel();
     private TuningFlywheel() { }
 
+    private TelemetryManager panelsTelemetry =  PanelsTelemetry.INSTANCE.getTelemetry();
+
     private final MotorGroup flywheelMotors = new MotorGroup(
-            new MotorEx("flywheelMotor1").reversed().floatMode(),
-            new MotorEx("flywheelMotor2").floatMode()
+            new MotorEx("flywheelMotor1").floatMode(),
+            new MotorEx("flywheelMotor2").reversed().floatMode()
     );
 
     public ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
 
     ControlSystem controller = ControlSystem.builder()
-            .velPid(0.0014,0,0)
+            .velPid(0.007,0,0)
             .basicFF(0.000379,0,0.05)
             .build();
 
@@ -69,5 +74,9 @@ public class TuningFlywheel implements Subsystem {
         ActiveOpMode.telemetry().addData("Flywheel Target", flywheelTarget);
         ActiveOpMode.telemetry().addData("Applied Power", power);
         ActiveOpMode.telemetry().addData("Hood Position", hoodServo.getPosition());
+        panelsTelemetry.addData("Flywheel Target", flywheelTarget);
+        panelsTelemetry.addData("Flywheel Speed", flywheelMotors.getVelocity());
+        panelsTelemetry.addData("applied power", power);
+        panelsTelemetry.update();
     }
 }

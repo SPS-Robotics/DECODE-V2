@@ -26,8 +26,8 @@ public class Flywheel implements Subsystem {
     private Flywheel() { }
 
     private final MotorGroup flywheelMotors = new MotorGroup(
-            new MotorEx("flywheelMotor1").reversed().floatMode(),
-            new MotorEx("flywheelMotor2").floatMode()
+            new MotorEx("flywheelMotor1").floatMode(),
+            new MotorEx("flywheelMotor2").reversed().floatMode()
     );
 
     private final ServoEx hoodServo = new ServoEx("hoodServo", 0.0001);
@@ -55,11 +55,13 @@ public class Flywheel implements Subsystem {
         controller.setGoal(new KineticState(0, RobotState.velocityLUT.get(distance), 0));
 
         if (!spinFlywheel) power = 0;
-        else power = controller.calculate(flywheelMotors.getState());
+        //else power = controller.calculate(flywheelMotors.getState());
+        else power = 0.4;
 
         flywheelMotors.setPower(power);
 
-        atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 50;
+        //atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 50;
+        atSpeed = true;
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Error", controller.getGoal().getVelocity() - flywheelMotors.getVelocity());
