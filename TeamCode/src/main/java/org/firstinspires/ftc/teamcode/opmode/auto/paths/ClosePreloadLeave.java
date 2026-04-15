@@ -105,10 +105,12 @@ public abstract class ClosePreloadLeave extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         Pose robotPose = follower().getPose();
-        RobotState.AUTO_END_POSE = robotPose;
-        RobotState.AUTO_END_X = robotPose.getX();
-        RobotState.AUTO_END_Y = robotPose.getY();
-        RobotState.AUTO_END_HEADING = robotPose.getHeading();
+        if (robotPose.getX() != 0 && robotPose.getY() != 0 && robotPose.getHeading() != 0) {
+            RobotState.AUTO_END_POSE = robotPose;
+            RobotState.AUTO_END_X = robotPose.getX();
+            RobotState.AUTO_END_Y = robotPose.getY();
+            RobotState.AUTO_END_HEADING = robotPose.getHeading();
+        }
         RobotState.TURRET_END_POS = Turret.INSTANCE.getTurretPosition();
         telemetry.addData("Robot X", robotPose.getX());
         telemetry.addData("Robot Y", robotPose.getY());
