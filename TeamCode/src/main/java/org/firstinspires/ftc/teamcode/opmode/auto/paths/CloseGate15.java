@@ -61,7 +61,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
 
     private Pose gateScoreControl = new Pose(21, 50.5);
 
-    private Pose closeSpikePose = new Pose(24, 84);
+    private Pose closeSpikePose = new Pose(16, 84);
     private Pose lastScorePose = new Pose(52, 111.4);
 
     private void initPoses() {
@@ -118,8 +118,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
 
         scoreGate = follower().pathBuilder()
                 .addPath(new BezierCurve(gateIntakePose, gateScoreControl, scorePose))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .setLinearHeadingInterpolation(gateIntakePose.getHeading(), gateIntakeStartHeading)
                 .build();
 
         intakeCloseSpike = follower().pathBuilder()
@@ -179,10 +178,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new ParallelRaceGroup(
-                        new Delay(1.2),
-                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
-                ),
+                new Delay(2),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
@@ -195,10 +191,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new ParallelRaceGroup(
-                        new Delay(1.2),
-                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
-                ),
+                new Delay(2),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
@@ -229,6 +222,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         LightingController.init();
+        Turret.INSTANCE.setTurretPosition(0).schedule();
     }
 
     @Override

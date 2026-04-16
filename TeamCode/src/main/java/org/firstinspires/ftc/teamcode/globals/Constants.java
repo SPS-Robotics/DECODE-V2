@@ -10,14 +10,14 @@ public class Constants {
         public static double ticksPerRevolution = 28.0 * 68.0 / 13.0; // Motor Encoder Calculation Required
         public static double pulleyRatio = 108.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -240;
-        public static double MAX_TICKS = 240;
+        public static double MIN_TICKS = -200;
+        public static double MAX_TICKS = 270;
 
-        public static double kP = 0.01;
+        public static double kP = 0.015;
         public static double kI = 0;
         public static double kD = 0.0005;
 
-        public static double RELOC_POS = 0;
+        public static double RELOC_POS = 92;
 
         public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
 
@@ -35,7 +35,7 @@ public class Constants {
     }
 
     public static class Flywheel {
-        public static double kP = 0.0014;
+        public static double kP = 0.007;
         public static double kI = 0;
         public static double kD = 0;
 
@@ -43,7 +43,7 @@ public class Constants {
         public static double kA = 0;
         public static double kS = 0.05;
 
-        // hood servo top = 0.16, hood servo bottom = 0.68
+        // hood servo top = 0.3, hood servo bottom = 1
     }
 
     public static class Lift {

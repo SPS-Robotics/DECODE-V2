@@ -208,7 +208,7 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesTrue(new SequentialGroup(
                         new InstantCommand(() -> follower().breakFollowing()),
                         new InstantCommand(driverControlled::cancel),
-                        Turret.INSTANCE.zeroTurret,
+                        Turret.INSTANCE.moveTurretBy(-1),
                         Lift.INSTANCE.liftRobot
                 ))
                 .whenBecomesFalse(Lift.INSTANCE.stopLift);
@@ -216,19 +216,28 @@ public class MainTeleOp extends NextFTCOpMode {
 
         // Debug Controls
         Gamepads.gamepad2().circle()
-                .whenBecomesTrue(Limelight.INSTANCE.relocaliseOdometry);
+                .toggleOnBecomesTrue()
+                .whenBecomesTrue(Flywheel.INSTANCE.enableDistanceOverride)
+                .whenBecomesFalse(Flywheel.INSTANCE.disableDistanceOverride);
 
         Gamepads.gamepad2().square()
                 .whenBecomesTrue(() -> follower().setPose(RobotState.LOADING_ZONE));
 
         Gamepads.gamepad2().cross()
-                .whenBecomesTrue(Turret.INSTANCE.setTurretPosition(0));
+                .whenBecomesTrue(new ParallelGroup(
+                        Turret.INSTANCE.setTurretPosition(0),
+                        new InstantCommand(() -> follower().setPose(RobotState.LOADING_ZONE))
+                ));
 
         Gamepads.gamepad2().dpadUp()
                 .whenBecomesTrue(() -> RobotState.GOAL_POSE.plus(new Pose(-1, 1)));
 
         Gamepads.gamepad2().dpadDown()
                 .whenBecomesTrue(() -> RobotState.GOAL_POSE.minus(new Pose(-1, 1)));
+        Gamepads.gamepad2().dpadLeft()
+                .whenBecomesTrue(Turret.INSTANCE.moveTurretBy(5));
+        Gamepads.gamepad2().dpadRight()
+                .whenBecomesTrue(Turret.INSTANCE.moveTurretBy(-5));
     }
 
     @Override

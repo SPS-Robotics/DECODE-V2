@@ -36,6 +36,8 @@ public class Flywheel implements Subsystem {
 
     private boolean spinFlywheel = false;
     public boolean atSpeed = false;
+
+    private boolean distanceOverride = false;
     double power;
 
     ControlSystem controller = ControlSystem.builder()
@@ -46,22 +48,23 @@ public class Flywheel implements Subsystem {
     public Command turnFlywheelOn = new InstantCommand(() -> spinFlywheel = true);
     public Command turnFlywheelOff = new InstantCommand(() -> spinFlywheel = false);
 
+    public Command enableDistanceOverride = new InstantCommand(() -> distanceOverride = true);
+    public Command disableDistanceOverride = new InstantCommand(() -> distanceOverride = false);
+
     public void periodic() {
         Pose robotPose = PedroComponent.follower().getPose();
 
         double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
+        if (distanceOverride) distance = 50;
 
         hoodServo.setPosition(RobotState.hoodLUT.get(distance));
         controller.setGoal(new KineticState(0, RobotState.velocityLUT.get(distance), 0));
 
         if (!spinFlywheel) power = 0;
-        //else power = controller.calculate(flywheelMotors.getState());
-        else power = 0.4;
-
+        else power = controller.calculate(flywheelMotors.getState());
         flywheelMotors.setPower(power);
 
-        //atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 50;
-        atSpeed = true;
+        atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 50;
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Error", controller.getGoal().getVelocity() - flywheelMotors.getVelocity());

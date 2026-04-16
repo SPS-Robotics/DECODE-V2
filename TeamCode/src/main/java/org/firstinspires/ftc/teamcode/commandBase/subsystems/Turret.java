@@ -33,10 +33,11 @@ public class Turret implements Subsystem {
 
     private final MotorEx turretRotator = new MotorEx("turretRotator").brakeMode();
 
-    //private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
+    private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
     private boolean turretTracking = false;
 
-    private boolean aimZero = false;
+    private boolean debugMode = false;
+    private double debugTarget = 0;
 
     public double getTurretPosition() {
         return turretRotator.getCurrentPosition();
@@ -56,19 +57,27 @@ public class Turret implements Subsystem {
     public Command enableTracking = new InstantCommand(() -> turretTracking = true);
     public Command disableTracking = new InstantCommand(() -> turretTracking = false);
 
-    public Command zeroTurret = new InstantCommand(() -> aimZero = true);
-    public Command unZeroTurret = new InstantCommand(() -> aimZero = false);
+    public Command moveTurretBy(double pos) {
+        return new InstantCommand(() -> {
+            debugTarget += pos;
+            debugMode = true;
+        });
+    }
 
     public Command setTurretPosition(double pos) {
-        return new InstantCommand(() -> turretRotator.setCurrentPosition(pos));
+        return new InstantCommand(() -> {
+            turretRotator.setCurrentPosition(pos);
+            debugMode = false;
+            debugTarget = 0;
+        });
     }
 
     @Override
     public void periodic() {
-        //if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
+        if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
         double targetPos;
-        if (!aimZero) targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
-        else targetPos = 0;
+        if (!debugMode) targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
+        else targetPos = debugTarget;
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
 

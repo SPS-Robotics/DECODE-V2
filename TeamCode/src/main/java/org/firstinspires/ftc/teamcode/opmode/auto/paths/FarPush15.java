@@ -46,9 +46,11 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
     private Pose startPose = new Pose(64.9, 8, Math.toRadians(180));
     private Pose pushToPose = new Pose(50, 8);
-    private Pose middleSpikePose = new Pose(17, 63);
-    private Pose middleSpikeControl1 = new Pose(63, 79);
-    private Pose middleSpikeControl2 = new Pose(31, 52);
+    private Pose middleSpikePose = new Pose(20, 58, Math.toRadians(180));
+    private Pose middleSpikeControl = new Pose(60, 60);
+
+    private Pose gatePose = new Pose(18, 70, Math.toRadians(180));
+    private Pose gateControl = new Pose(27, 65);
     private Pose scorePose = new Pose(57.5, 86.7);
     private double gateIntakeStartHeading = Math.toRadians(225);
 
@@ -57,7 +59,8 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
     private Pose gateScoreControl = new Pose(21, 50.5);
 
-    private Pose farSpikePose = new Pose(24, 36);
+    private double farStartHeading = Math.toRadians(225);
+    private Pose farSpikePose = new Pose(24, 36, Math.toRadians(180));
     private Pose farSpikeControl = new Pose(57.5, 36);
     private Pose closeSpikePose = new Pose(24, 84);
     private Pose lastScorePose = new Pose(51, 113);
@@ -67,14 +70,18 @@ public abstract class FarPush15 extends NextFTCOpMode {
             startPose = startPose.mirror();
             pushToPose = pushToPose.mirror();
             middleSpikePose = middleSpikePose.mirror();
-            middleSpikeControl1 = middleSpikeControl1.mirror();
-            middleSpikeControl2 = middleSpikeControl2.mirror();
+            middleSpikeControl = middleSpikeControl.mirror();
+
+            gatePose = gatePose.mirror();
+            gateControl = gateControl.mirror();
 
             scorePose = scorePose.mirror();
             gateIntakeStartHeading = MathUtils.mirrorHeading(gateIntakeStartHeading);
             gateIntakePose = gateIntakePose.mirror();
             gateIntakeControl = gateIntakeControl.mirror();
             gateScoreControl = gateScoreControl.mirror();
+
+            farStartHeading = MathUtils.mirrorHeading(farStartHeading);
             farSpikePose = farSpikePose.mirror();
             farSpikeControl = farSpikeControl.mirror();
             closeSpikePose = closeSpikePose.mirror();
@@ -82,7 +89,7 @@ public abstract class FarPush15 extends NextFTCOpMode {
         }
     }
 
-    private PathChain pushAlliance, intakeMiddleSpike, scoreMiddleSpike, gateIntake, scoreGate, intakeFarSpike, scoreFarSpike,  intakeCloseSpike, scoreLastSpike;
+    private PathChain pushAlliance, intakeMiddleSpike, openGate, scoreMiddleSpike, gateIntake, scoreGate, intakeFarSpike, scoreFarSpike,  intakeCloseSpike, scoreLastSpike;
     private void buildPaths() {
         pushAlliance = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, pushToPose))
@@ -90,8 +97,13 @@ public abstract class FarPush15 extends NextFTCOpMode {
                 .build();
 
         intakeMiddleSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(pushToPose, middleSpikeControl1, middleSpikeControl2, middleSpikePose))
-                .setTangentHeadingInterpolation()
+                .addPath(new BezierCurve(pushToPose, middleSpikeControl, middleSpikePose))
+                .setConstantHeadingInterpolation(middleSpikePose.getHeading())
+                .build();
+
+        openGate = follower().pathBuilder()
+                .addPath(new BezierCurve(middleSpikePose, gateControl, gatePose))
+                .setConstantHeadingInterpolation(middleSpikePose.getHeading())
                 .build();
 
         scoreMiddleSpike = follower().pathBuilder()
@@ -126,7 +138,7 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
         intakeFarSpike = follower().pathBuilder()
                 .addPath(new BezierCurve(scorePose, farSpikeControl, farSpikePose))
-                .setTangentHeadingInterpolation()
+                .setLinearHeadingInterpolation(farStartHeading, farSpikePose.getHeading())
                 .build();
 
         scoreFarSpike = follower().pathBuilder()
@@ -165,9 +177,9 @@ public abstract class FarPush15 extends NextFTCOpMode {
         return new SequentialGroup(
                 // Score Preload
                 new ParallelGroup(
-                        Flywheel.INSTANCE.turnFlywheelOn,
+                        //Flywheel.INSTANCE.turnFlywheelOn,
                         Intake.INSTANCE.openGate,
-                        new WaitUntil(() -> Flywheel.INSTANCE.atSpeed),
+                        //new WaitUntil(() -> Flywheel.INSTANCE.atSpeed),
                         new SequentialGroup(
                                 new Delay(0.3),
                                 Turret.INSTANCE.enableTracking
@@ -183,6 +195,8 @@ public abstract class FarPush15 extends NextFTCOpMode {
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeMiddleSpike),
                 Intake.INSTANCE.stopIntake,
+
+                new FollowPath(openGate),
 
                 // Score Middle Spike
                 new ParallelGroup(
@@ -237,6 +251,7 @@ public abstract class FarPush15 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         LightingController.init();
+        Turret.INSTANCE.setTurretPosition(0).schedule();
     }
 
     @Override
