@@ -179,6 +179,7 @@ public class FarCycle15 extends NextFTCOpMode {
         buildPaths();
         follower().setStartingPose(startPose);
         LightingController.init();
+        Turret.INSTANCE.setTurretPosition(0).schedule();
     }
 
     @Override

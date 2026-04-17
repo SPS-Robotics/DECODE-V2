@@ -81,6 +81,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
     }
 
     private PathChain scorePreload, intakeMiddleSpike, scoreMiddleSpike, gateIntake, scoreGate, intakeCloseSpike, scoreLastSpike;
+
     private void buildPaths() {
         scorePreload = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, preloadScorePose))
