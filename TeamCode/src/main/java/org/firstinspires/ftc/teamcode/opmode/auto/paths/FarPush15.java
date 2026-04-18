@@ -46,6 +46,8 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
     private Pose startPose = new Pose(64.9, 8, Math.toRadians(180));
     private Pose pushToPose = new Pose(50, 8);
+
+    private Pose farScorePose = new Pose(58, 16, Math.toRadians(180));
     private Pose middleSpikePose = new Pose(20, 58, Math.toRadians(180));
     private Pose middleSpikeControl = new Pose(60, 60);
 
@@ -70,6 +72,9 @@ public abstract class FarPush15 extends NextFTCOpMode {
         if (alliance == RobotState.AllianceColor.RED) {
             startPose = startPose.mirror();
             pushToPose = pushToPose.mirror();
+
+            farScorePose = farScorePose.mirror();
+
             middleSpikePose = middleSpikePose.mirror();
             middleSpikeControl = middleSpikeControl.mirror();
 
@@ -90,15 +95,20 @@ public abstract class FarPush15 extends NextFTCOpMode {
         }
     }
 
-    private PathChain pushAlliance, intakeMiddleSpike, openGate, scoreMiddleSpike, gateIntake, scoreGate, intakeFarSpike, scoreFarSpike,  intakeCloseSpike, scoreLastSpike;
+    private PathChain pushAlliance, farScore, intakeMiddleSpike, openGate, scoreMiddleSpike, gateIntake, scoreGate, intakeFarSpike, scoreFarSpike,  intakeCloseSpike, scoreLastSpike;
     private void buildPaths() {
         pushAlliance = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, pushToPose))
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
 
+        farScore = follower().pathBuilder()
+                .addPath(new BezierLine(pushToPose, farScorePose))
+                .setConstantHeadingInterpolation(farScorePose.getHeading())
+                .build();
+
         intakeMiddleSpike = follower().pathBuilder()
-                .addPath(new BezierCurve(pushToPose, middleSpikeControl, middleSpikePose))
+                .addPath(new BezierCurve(farScorePose, middleSpikeControl, middleSpikePose))
                 .setConstantHeadingInterpolation(middleSpikePose.getHeading())
                 .build();
 
@@ -176,21 +186,21 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
     private Command autonomousRoutine() {
         return new SequentialGroup(
-                // Score Preload
+                // Push alliance out of launch zone
                 new ParallelGroup(
-                        //Flywheel.INSTANCE.turnFlywheelOn,
+                        Flywheel.INSTANCE.turnFlywheelOn,
                         Intake.INSTANCE.openGate,
-                        //new WaitUntil(() -> Flywheel.INSTANCE.atSpeed),
+                        new FollowPath(pushAlliance),
                         new SequentialGroup(
                                 new Delay(0.3),
                                 Turret.INSTANCE.enableTracking
                         )
                 ),
 
+                // Score preload
+                new FollowPath(farScore),
+                new WaitUntil(() -> Flywheel.INSTANCE.atSpeed),
                 shootArtifacts(),
-
-                // Push alliance out of launch zone
-                new FollowPath(pushAlliance),
 
                 // Intake Middle Spike
                 Intake.INSTANCE.intakeArtifacts,

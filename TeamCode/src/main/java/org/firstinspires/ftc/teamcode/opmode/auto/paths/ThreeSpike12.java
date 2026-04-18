@@ -45,7 +45,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
     private Pose startPose = new Pose(14, 112.093, Math.toRadians(270));
     private Pose preloadScorePose = new Pose(48, 96.3, Math.toRadians(270));
 
-    private Pose closeSpikePose = new Pose(116, 84, Math.toRadians(180));
+    private Pose closeSpikePose = new Pose(16, 84, Math.toRadians(180));
     private Pose closeSpikeControl = new Pose(58, 84);
 
     private Pose gateOpenPose = new Pose(18, 70, Math.toRadians(180));
@@ -65,6 +65,7 @@ public abstract class ThreeSpike12 extends NextFTCOpMode {
         if (alliance == RobotState.AllianceColor.RED) {
             startPose = startPose.mirror();
             scorePose = scorePose.mirror();
+            preloadScorePose = preloadScorePose.mirror();
 
             closeSpikePose = closeSpikePose.mirror();
             closeSpikeControl = closeSpikeControl.mirror();

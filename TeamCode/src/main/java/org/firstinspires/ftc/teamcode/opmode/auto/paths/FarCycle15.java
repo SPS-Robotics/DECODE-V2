@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
@@ -44,16 +45,16 @@ public class FarCycle15 extends NextFTCOpMode {
     }
 
     private double constantHeading = Math.toRadians(180);
-    private final double intakeX = 12;
+    private final double intakeX = 10.8;
 
     private Pose startPose = new Pose(55.093, 8, constantHeading);
     private Pose cornerIntakePose = new Pose(intakeX, 9);
-    private Pose scorePose = new Pose(48, 9);
-    private Pose farSpikePose = new Pose(20.8, 36);
-    private Pose farSpikeControl = new Pose(56, 36);
+    private Pose scorePose = new Pose(60, 18);
+    private Pose farSpikePose = new Pose(intakeX, 36);
+    private Pose farSpikeControl = new Pose(56, 40);
     private Pose sweepStartPose = new Pose(intakeX, 30);
     private Pose sweepStartControl = new Pose(48, 30);
-    private Pose sweepIntakeControl = new Pose(18, 19);
+    private Pose sweepIntakeControl = new Pose(24, 19);
     private void initPoses() {
         if (alliance == RobotState.AllianceColor.RED) {
             constantHeading = MathUtils.mirrorHeading(constantHeading);
@@ -68,11 +69,11 @@ public class FarCycle15 extends NextFTCOpMode {
         }
     }
 
-    private PathChain startIntake, intakeCorner, scoreCorner, intakeFarSpike, scoreFarSpike, sweepStart, sweepIntake;
+    private PathChain scorePreload, intakeCorner, scoreCorner, intakeFarSpike, scoreFarSpike, sweepStart, sweepIntake;
 
     private void buildPaths() {
-        startIntake = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, cornerIntakePose))
+        scorePreload = follower().pathBuilder()
+                .addPath(new BezierLine(startPose, scorePose))
                 .setConstantHeadingInterpolation(constantHeading)
                 .build();
         intakeCorner = follower().pathBuilder()
@@ -104,7 +105,7 @@ public class FarCycle15 extends NextFTCOpMode {
     private Command shootArtifacts() {
         return new SequentialGroup(
                 new SequentialGroup(
-                        Intake.INSTANCE.openGate,
+                        //Intake.INSTANCE.openGate,
                         Intake.INSTANCE.intakeArtifacts,
                         new Delay(SHOOT_TIME)
                 ),
@@ -120,6 +121,9 @@ public class FarCycle15 extends NextFTCOpMode {
                 // Score Preload
                 new ParallelGroup(
                         Flywheel.INSTANCE.turnFlywheelOn,
+                        Intake.INSTANCE.openGate,
+                        new FollowPath(scorePreload),
+                        new WaitUntil(() -> Flywheel.INSTANCE.atSpeed),
                         new SequentialGroup(
                                 new Delay(0.3),
                                 Turret.INSTANCE.enableTracking
@@ -130,11 +134,15 @@ public class FarCycle15 extends NextFTCOpMode {
 
                 // Corner Intake
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(startIntake),
+                new FollowPath(intakeCorner),
+                new Delay(0.8),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Corner Intake
-                new FollowPath(scoreCorner),
+                new ParallelGroup(
+                        new FollowPath(scoreCorner),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Intake Far Spike
@@ -143,26 +151,37 @@ public class FarCycle15 extends NextFTCOpMode {
                 Intake.INSTANCE.stopIntake,
 
                 // Score Far Spike
-                new FollowPath(scoreFarSpike),
+                new ParallelGroup(
+                        new FollowPath(scoreFarSpike),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Sweep Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(sweepStart),
                 new FollowPath(sweepIntake),
+                new Delay(0.5),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Sweep
-                new FollowPath(scoreCorner),
+                new ParallelGroup(
+                        new FollowPath(scoreCorner),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Corner Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(intakeCorner),
+                new Delay(0.8),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Corner Intake
-                new FollowPath(scoreCorner),
+                new ParallelGroup(
+                        new FollowPath(scoreCorner),
+                        Intake.INSTANCE.openGate
+                ),
                 shootArtifacts(),
 
                 // Leave

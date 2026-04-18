@@ -64,7 +64,7 @@ public class Flywheel implements Subsystem {
         else power = controller.calculate(flywheelMotors.getState());
         flywheelMotors.setPower(power);
 
-        atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 50;
+        atSpeed = Math.abs(controller.getGoal().getVelocity() - flywheelMotors.getVelocity()) < 30;
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Error", controller.getGoal().getVelocity() - flywheelMotors.getVelocity());

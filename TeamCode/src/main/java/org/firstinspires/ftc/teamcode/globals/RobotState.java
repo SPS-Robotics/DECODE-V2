@@ -28,7 +28,7 @@ public class RobotState {
     }
 
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
-    public static Pose GOAL_POSE = new Pose(2, 133);
+    public static Pose GOAL_POSE = new Pose(3, 133);
     public static Pose LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
 
     public static Pose AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
@@ -54,13 +54,13 @@ public class RobotState {
      */
 
     public static final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(31.2829, 39.368, 48.8716, 53.1186, 57.5015, 66.2944, 70.8819, 78.1916, 85.3848, 89.8278, 91.6035, 131.4509, 138.8672),
-            Arrays.asList(1140.0, 1140.0, 1180.0, 1200.0, 1240.0, 1280.0, 1340.0, 1380.0, 1400.0, 1520.0, 1460.0, 1800.0, 1840.0)
+            Arrays.asList(41.021, 48.0373, 51.1171, 62.0988, 68.3172, 73.3488, 86.1183, 97.4331, 127.7073, 129.9429, 137.5253, 142.0984),
+            Arrays.asList(1180.0, 1180.0, 1220.0, 1280.0, 1320.0, 1340.0, 1460.0, 1540.0, 1820.0, 1860.0, 1880.0, 1900.0)
     ).createLUT();
 
     public static final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(31.2829, 39.368, 48.8716, 53.1186, 57.5015, 66.2944, 70.8819, 78.1916, 85.3848, 89.8278, 91.6035, 131.4509, 138.8672),
-            Arrays.asList(0.98, 0.86, 0.74, 0.68, 0.62, 0.58, 0.54, 0.48, 0.42, 0.38, 0.38, 0.30, 0.28)
+            Arrays.asList(41.021, 48.0373, 51.1171, 62.0988, 68.3172, 73.3488, 86.1183, 97.4331, 127.7073, 129.9429, 137.5372, 142.0984),
+            Arrays.asList(0.60, 0.58, 0.56, 0.50, 0.44, 0.42, 0.30, 0.24, 0.16, 0.18, 0.16, 0.14)
     ).createLUT();
 
     public static final InterpLUT tofLUT = new InterpLUT(
@@ -86,7 +86,7 @@ public class RobotState {
         TURRET_END_POS = 0;
 
         if (alliance == AllianceColor.BLUE) {
-            GOAL_POSE = new Pose(2, 133);
+            GOAL_POSE = new Pose(3, 133);
             LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
             AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
             AUTO_END_X = 14.0;
@@ -97,7 +97,7 @@ public class RobotState {
         }
 
         if (alliance == AllianceColor.RED) {
-            GOAL_POSE = new Pose(141.5 - 2, 133);
+            GOAL_POSE = new Pose(3, 133).mirror();
             LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0)).mirror();
             AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270)).mirror();
             AUTO_END_X = 141.5-14.0;

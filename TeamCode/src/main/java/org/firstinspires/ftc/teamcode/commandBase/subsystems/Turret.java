@@ -33,7 +33,12 @@ public class Turret implements Subsystem {
 
     private final MotorEx turretRotator = new MotorEx("turretRotator").brakeMode();
 
-    private final TouchSensor magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
+    private TouchSensor magneticLimitSwitch;
+
+    @Override
+    public void initialize() {
+        magneticLimitSwitch = ActiveOpMode.hardwareMap().get(TouchSensor.class, "magneticLimitSwitch");
+    }
     private boolean turretTracking = false;
 
     private boolean debugMode = false;
@@ -92,5 +97,7 @@ public class Turret implements Subsystem {
 
         ActiveOpMode.telemetry().addData("TurretPos", turretRotator.getCurrentPosition());
         ActiveOpMode.telemetry().addData("TurretTarget", targetPos);
+        ActiveOpMode.telemetry().addData("power applied", power);
+        ActiveOpMode.telemetry().addData("switch pressed", magneticLimitSwitch.isPressed());
     }
 }
