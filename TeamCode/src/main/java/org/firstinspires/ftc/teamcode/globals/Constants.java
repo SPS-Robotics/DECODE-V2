@@ -8,7 +8,7 @@ import dev.nextftc.control.feedback.PIDCoefficients;
 public class Constants {
     public static class Turret {
         public static double ticksPerRevolution = 28.0 * (76.0 / 21.0) * (84.0 / 29.0); // Motor Encoder Calculation Required
-        public static double pulleyRatio = 108.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
+        public static double pulleyRatio = 109.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
         public static double MIN_TICKS = -400;
         public static double MAX_TICKS = 600;
@@ -29,7 +29,7 @@ public class Constants {
         public static double OUTTAKE_POWER = -0.4;
 
         public static double GATE_OPEN = 0.95;
-        public static double GATE_CLOSE = 0.2;
+        public static double GATE_CLOSE = 0.26;
 
         public static double GATE_OPEN_TIME = 0.8;
     }
@@ -60,8 +60,8 @@ public class Constants {
     }
 
     public static class Auto {
-        public static double SHOOT_TIME = 0.67;
-        public static double GATE_DELAY = 3;
+        public static double SHOOT_TIME = 0.75;
+        public static double GATE_DELAY = 1.8;
     }
 
     public static class Limelight {

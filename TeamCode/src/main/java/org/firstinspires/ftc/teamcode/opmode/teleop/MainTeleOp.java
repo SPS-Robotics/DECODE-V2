@@ -77,6 +77,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Turret.INSTANCE.disableTracking.schedule();
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
         LightingController.init();
+        RobotState.SOTM = true;
         follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
     }
 
@@ -170,22 +171,8 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.turnFlywheelOff);
 
         //Drive Controls
-        Gamepads.gamepad1().rightStickX().inRange(-0.05, 0.05)
+        Gamepads.gamepad1().rightStickX().greaterThan(0.05).or(Gamepads.gamepad1().rightStickX().lessThan(-0.05))
                 .whenBecomesTrue(() -> headingMode = HeadingMode.GAMEPAD);
-/*
-        Gamepads.gamepad1().leftStickX().inRange(-0.05, 0.05)
-                .and(Gamepads.gamepad1().leftStickY().inRange(-0.05, 0.05))
-                .and(Gamepads.gamepad1().rightStickX().inRange(-0.05, 0.05))
-                .whenBecomesTrue(() -> {
-                    follower().holdPoint(follower().getPose());
-                    holdPosition = true;
-                })
-                .whenBecomesFalse(() -> {
-                    follower().startTeleopDrive(false);
-                    holdPosition = false;
-                });
-
- */
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.05)
                 .whenBecomesTrue(() -> scalar = 0.3)
@@ -221,7 +208,7 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.disableDistanceOverride);
 
         Gamepads.gamepad2().square()
-                .whenBecomesTrue(() -> follower().setPose(RobotState.LOADING_ZONE));
+                .whenBecomesTrue(() -> RobotState.SOTM = !RobotState.SOTM);
 
         Gamepads.gamepad2().cross()
                 .whenBecomesTrue(new ParallelGroup(
@@ -268,7 +255,7 @@ public class MainTeleOp extends NextFTCOpMode {
         telemetry.addData("Robot Y", robotPose.getY());
         telemetry.addData("Robot Heading", Math.toDegrees(robotPose.getHeading()));
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
-        telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.addData("Goal Pose", RobotState.velocityCompensate(RobotState.GOAL_POSE));
         telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
         telemetry.update();
         drawOnlyCurrent();

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto.paths;
 
 import static org.firstinspires.ftc.teamcode.globals.Constants.Auto.SHOOT_TIME;
+import static org.firstinspires.ftc.teamcode.globals.Constants.Auto.GATE_DELAY;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
@@ -179,7 +180,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(2),
+                new Delay(GATE_DELAY),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
@@ -192,7 +193,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
                 new FollowPath(gateIntake),
-                new Delay(2),
+                new Delay(GATE_DELAY),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate

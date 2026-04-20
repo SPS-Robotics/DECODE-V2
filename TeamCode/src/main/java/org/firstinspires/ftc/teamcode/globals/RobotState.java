@@ -41,6 +41,8 @@ public class RobotState {
 
     public static double TURRET_END_POS = 0;
 
+    public static boolean SOTM = false;
+
     /*
     public static final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 69.9892, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 132.8782, 135.4035, 144.2914), // Distance
@@ -64,8 +66,8 @@ public class RobotState {
     ).createLUT();
 
     public static final InterpLUT tofLUT = new InterpLUT(
-            Arrays.asList(42.0971, 49.6647, 56.9606, 66.5632, 67.5254, 72.2892, 80.6825, 87.8641),
-            Arrays.asList(1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7)
+            Arrays.asList(46.4387, 52.9599, 58.2837, 65.5336),
+            Arrays.asList(0.37, 0.47, 0.57, 0.67)
     ).createLUT();
 
     public static Pose velocityCompensate(Pose goalPose) {
@@ -84,6 +86,7 @@ public class RobotState {
     public static void setAlliance(AllianceColor alliance) {
         ALLIANCE_COLOR = alliance;
         TURRET_END_POS = 0;
+        SOTM = false;
 
         if (alliance == AllianceColor.BLUE) {
             GOAL_POSE = new Pose(3, 133);

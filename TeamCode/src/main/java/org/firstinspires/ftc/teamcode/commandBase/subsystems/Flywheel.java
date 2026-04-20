@@ -53,8 +53,10 @@ public class Flywheel implements Subsystem {
 
     public void periodic() {
         Pose robotPose = PedroComponent.follower().getPose();
+        double distance;
+        if (RobotState.SOTM) distance = robotPose.distanceFrom(RobotState.velocityCompensate(RobotState.GOAL_POSE));
+        else distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
 
-        double distance = robotPose.distanceFrom(RobotState.GOAL_POSE);
         if (distanceOverride) distance = 50;
 
         hoodServo.setPosition(RobotState.hoodLUT.get(distance));
@@ -68,5 +70,6 @@ public class Flywheel implements Subsystem {
 
         ActiveOpMode.telemetry().addData("Flywheel Speed", flywheelMotors.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Error", controller.getGoal().getVelocity() - flywheelMotors.getVelocity());
+        ActiveOpMode.telemetry().addData("Distance To Goal", distance);
     }
 }

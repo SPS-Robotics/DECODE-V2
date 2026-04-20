@@ -79,10 +79,13 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
+        //if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
         double targetPos;
-        if (!debugMode) targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
-        else targetPos = debugTarget;
+        if (debugMode) targetPos = debugTarget;
+        else {
+            if (RobotState.SOTM) targetPos = calculateTurretPosition(RobotState.velocityCompensate(RobotState.GOAL_POSE));
+            else targetPos = calculateTurretPosition(RobotState.GOAL_POSE);
+        }
 
         controller.setGoal(new KineticState(targetPos, 0, 0));
 
