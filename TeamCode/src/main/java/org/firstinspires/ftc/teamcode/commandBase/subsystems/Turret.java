@@ -79,7 +79,7 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        //if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
+        if (magneticLimitSwitch.isPressed()) turretRotator.setCurrentPosition(Constants.Turret.RELOC_POS);
         double targetPos;
         if (debugMode) targetPos = debugTarget;
         else {

@@ -17,7 +17,7 @@ public class Constants {
         public static double kI = 0;
         public static double kD = 0.0003;
 
-        public static double RELOC_POS = 185;
+        public static double RELOC_POS = 55;
 
         public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
 
@@ -26,7 +26,7 @@ public class Constants {
 
     public static class Intake {
         public static double INTAKE_POWER = 1;
-        public static double OUTTAKE_POWER = -0.4;
+        public static double OUTTAKE_POWER = -0.6;
 
         public static double GATE_OPEN = 0.95;
         public static double GATE_CLOSE = 0.26;

@@ -76,6 +76,7 @@ public class MainTeleOp extends NextFTCOpMode {
     public void onInit() {
         Turret.INSTANCE.disableTracking.schedule();
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
+        Intake.INSTANCE.closeGate.schedule();
         LightingController.init();
         RobotState.SOTM = true;
         follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));

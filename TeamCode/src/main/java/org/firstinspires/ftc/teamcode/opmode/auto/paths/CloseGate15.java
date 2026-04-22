@@ -47,7 +47,7 @@ public abstract class CloseGate15 extends NextFTCOpMode {
         this.alliance = alliance;
     }
 
-    private Pose startPose = new Pose(14.0, 112.093, Math.toRadians(270));
+    private Pose startPose = new Pose(14.2, 112.093, Math.toRadians(270));
     private Pose preloadScorePose = new Pose(48, 96.3, Math.toRadians(270));
 
     private Pose middleSpikePose = new Pose(24, 59.9, Math.toRadians(180));
