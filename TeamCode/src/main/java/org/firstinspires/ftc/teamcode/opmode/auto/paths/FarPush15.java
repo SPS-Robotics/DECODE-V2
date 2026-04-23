@@ -57,7 +57,7 @@ public abstract class FarPush15 extends NextFTCOpMode {
 
     private double gateIntakeStartHeading = Math.toRadians(225);
 
-    private Pose gateIntakePose = new Pose(11, 58.4, Math.toRadians(156));
+    private Pose gateIntakePose = new Pose(11, 59                                       , Math.toRadians(156));
     private Pose gateIntakeControl = new Pose (48, 59);
 
     private Pose gateScoreControl = new Pose(21, 50.5);
