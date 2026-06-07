@@ -26,16 +26,18 @@ public class RobotState {
             return val;
         }
     }
-
+    //
     public static AllianceColor ALLIANCE_COLOR = AllianceColor.BLUE;
     public static Pose GOAL_POSE = new Pose(3, 133);
     public static Pose LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
 
-    public static Pose AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
+    public static Pose GATE_RELOC_POSE = new Pose(15.7, 78.0, Math.toRadians(90));
 
-    public static double AUTO_END_X = 14.0;
-    public static double AUTO_END_Y = 112.093;
-    public static double AUTO_END_HEADING = Math.toRadians(270);
+    public static Pose AUTO_END_POSE = new Pose(13.6, 111.4, Math.toRadians(0));
+
+    public static double AUTO_END_X = 13.6;
+    public static double AUTO_END_Y = 111.4;
+    public static double AUTO_END_HEADING = Math.toRadians(0);
     public static double GATE_HEADING = Math.toRadians(150);
     public static double PARK_HEADING = Math.toRadians(225);
 
@@ -91,23 +93,26 @@ public class RobotState {
         if (alliance == AllianceColor.BLUE) {
             GOAL_POSE = new Pose(3, 133);
             LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0));
-            AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270));
-            AUTO_END_X = 14.0;
-            AUTO_END_Y = 112.093;
-            AUTO_END_HEADING = Math.toRadians(270);
+            AUTO_END_POSE = new Pose(13.6, 111.4, Math.toRadians(0));
+            AUTO_END_X = 13.6;
+            AUTO_END_Y = 111.4;
+            AUTO_END_HEADING = Math.toRadians(0);
             GATE_HEADING = Math.toRadians(156);
             PARK_HEADING = Math.toRadians(225);
+            GATE_RELOC_POSE = new Pose(15.7, 78.0, Math.toRadians(90));
+
         }
 
         if (alliance == AllianceColor.RED) {
             GOAL_POSE = new Pose(3, 133).mirror();
             LOADING_ZONE = new Pose(141.5 - 10.343, 8, Math.toRadians(0)).mirror();
-            AUTO_END_POSE = new Pose(14.0, 112.093, Math.toRadians(270)).mirror();
-            AUTO_END_X = 141.5-14.0;
-            AUTO_END_Y = 112.093;
-            AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(270));
+            AUTO_END_POSE = new Pose(13.6, 111.4, Math.toRadians(0)).mirror();
+            AUTO_END_X = 141.5-13.6;
+            AUTO_END_Y = 111.4;
+            AUTO_END_HEADING = MathUtils.mirrorHeading(Math.toRadians(0));
             GATE_HEADING = MathUtils.mirrorHeading(Math.toRadians(156));
             PARK_HEADING = MathUtils.mirrorHeading(Math.toRadians(225));
+            GATE_RELOC_POSE = new Pose(15.7, 78.0, Math.toRadians(90)).mirror();
         }
     }
 }

@@ -32,6 +32,7 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.core.units.Angle;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -58,18 +59,24 @@ public class MainTeleOp extends NextFTCOpMode {
         );
     }
 
-    private PedroDriverControlled driverControlled;
+    private MecanumDriverControlled driverControlled;
     private double scalar = 1;
-    private boolean holdPosition = false;
-
     private HeadingMode headingMode = HeadingMode.GAMEPAD;
     private double targetHeading;
+
+    private final MotorEx frontLeft = new MotorEx("frontLeft").brakeMode();
+    private final MotorEx frontRight = new MotorEx("frontRight").brakeMode();
+    private final MotorEx backLeft = new MotorEx("backLeft").brakeMode();
+    private final MotorEx backRight = new MotorEx("backRight").brakeMode();
+
+
+
 
 
 
     ControlSystem controller = ControlSystem.builder()
             .angular(AngleType.RADIANS,
-                    feedback -> feedback.posPid(0.9, 0, 0.001)
+                    feedback -> feedback.posPid(0.85, 0, 0.002)
             ).build();
 
     @Override
@@ -78,7 +85,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
         Intake.INSTANCE.closeGate.schedule();
         LightingController.init();
-        RobotState.SOTM = true;
+        RobotState.SOTM = false;
         follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
     }
 
@@ -101,37 +108,43 @@ public class MainTeleOp extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
-            driverControlled = new PedroDriverControlled(
-                    Gamepads.gamepad1().leftStickY(),
-                    Gamepads.gamepad1().leftStickX(),
+            driverControlled = new MecanumDriverControlled(
+                    frontLeft,
+                    frontRight,
+                    backLeft,
+                    backRight,
+                    Gamepads.gamepad1().leftStickY().map(x -> Math.pow(x, 2) * Math.signum(x)),
+                    Gamepads.gamepad1().leftStickX().negate().map(x -> Math.pow(x, 2) * Math.signum(x)),
                     () -> {
                         switch (headingMode) {
                             case GAMEPAD:
-                                return (double) (gamepad1.right_stick_x * -1);
+                                return Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
                             case ABSOLUTE:
-                                return controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                                return -controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
                             default:
                                 throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
                         }
                     },
-                    false
-            );
+                    new FieldCentric(() -> Angle.fromRad(follower().getHeading())));
         } else {
-            driverControlled = new PedroDriverControlled(
-                    Gamepads.gamepad1().leftStickY().negate(),
-                    Gamepads.gamepad1().leftStickX().negate(),
+            driverControlled = new MecanumDriverControlled(
+                    frontLeft,
+                    frontRight,
+                    backLeft,
+                    backRight,
+                    Gamepads.gamepad1().leftStickY().negate().map(x -> Math.pow(x, 2) * Math.signum(x)),
+                    Gamepads.gamepad1().leftStickX().map(x -> Math.pow(x, 2) * Math.signum(x)),
                     () -> {
                         switch (headingMode) {
                             case GAMEPAD:
-                                return (double) (gamepad1.right_stick_x * -1);
+                                return (-1) * Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
                             case ABSOLUTE:
-                                return controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                                return -controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
                             default:
                                 throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
                         }
                     },
-                    false
-            );
+                    new FieldCentric(() -> Angle.fromRad(follower().getHeading())));
         }
 
         driverControlled.schedule();
@@ -139,8 +152,6 @@ public class MainTeleOp extends NextFTCOpMode {
         // follower().startTeleopDrive(true);
 
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
-        Lift.INSTANCE.disengageLift.schedule();
-
         // Intake Controls
         Gamepads.gamepad1().rightTrigger().greaterThan(0.1)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -190,17 +201,6 @@ public class MainTeleOp extends NextFTCOpMode {
                     headingMode = HeadingMode.ABSOLUTE;
                     targetHeading = RobotState.PARK_HEADING;
                 });
-
-
-        Gamepads.gamepad1().square()
-                .whenBecomesTrue(new SequentialGroup(
-                        new InstantCommand(() -> follower().breakFollowing()),
-                        new InstantCommand(driverControlled::cancel),
-                        Turret.INSTANCE.moveTurretBy(-1),
-                        Lift.INSTANCE.liftRobot
-                ))
-                .whenBecomesFalse(Lift.INSTANCE.stopLift);
-
 
         // Debug Controls
         Gamepads.gamepad2().circle()

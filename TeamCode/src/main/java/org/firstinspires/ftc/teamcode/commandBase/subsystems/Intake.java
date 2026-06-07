@@ -35,10 +35,16 @@ public class Intake implements Subsystem {
             new Delay(Constants.Intake.GATE_OPEN_TIME)
     ).requires(gateServo);
 
+    /*
     public Command closeGate = new SequentialGroup(
             new Delay(Constants.Intake.GATE_OPEN_TIME),
             new SetPosition(gateServo, Constants.Intake.GATE_CLOSE)
     ).requires(gateServo);
+
+     */
+
+
+    public Command closeGate = new SetPosition(gateServo, Constants.Intake.GATE_CLOSE).requires(gateServo);
 
     @Override
     public void initialize() {

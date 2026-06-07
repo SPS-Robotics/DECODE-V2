@@ -30,4 +30,5 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'androidx.ink:ink-geometry-android:1.0.0'
 }

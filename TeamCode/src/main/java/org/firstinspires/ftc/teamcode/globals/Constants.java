@@ -28,10 +28,10 @@ public class Constants {
         public static double INTAKE_POWER = 1;
         public static double OUTTAKE_POWER = -0.6;
 
-        public static double GATE_OPEN = 0.95;
-        public static double GATE_CLOSE = 0.26;
+        public static double GATE_OPEN = 0.9;
+        public static double GATE_CLOSE = 0.5;
 
-        public static double GATE_OPEN_TIME = 0.8;
+        public static double GATE_OPEN_TIME = 0.4;
     }
 
     public static class Flywheel {
@@ -60,8 +60,8 @@ public class Constants {
     }
 
     public static class Auto {
-        public static double SHOOT_TIME = 0.75;
-        public static double GATE_DELAY = 1.8;
+        public static double SHOOT_TIME = 0.5;
+        public static double GATE_DELAY = 1.2;
     }
 
     public static class Limelight {
