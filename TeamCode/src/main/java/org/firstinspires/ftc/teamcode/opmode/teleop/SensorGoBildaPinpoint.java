@@ -131,8 +131,9 @@ public class SensorGoBildaPinpoint extends OpMode {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
          */
+        pinpoint.setYawScalar(1); // ADJUST HERE
 
-        pinpoint.setOffsets(4.39, -6.01, DistanceUnit.INCH); //these are tuned for 3110-0002-0001 Product Insight #1
+        pinpoint.setOffsets(0, 0, DistanceUnit.INCH); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
          * Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
