@@ -1,32 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
-import com.pedropathing.ftc.drivetrains.Mecanum;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
-
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.commandBase.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Limelight;
-import org.firstinspires.ftc.teamcode.commandBase.subsystems.TuningFlywheel;
 import org.firstinspires.ftc.teamcode.commandBase.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.globals.RobotState;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.util.Drawing;
-//import org.firstinspires.ftc.teamcode.util.LightingController;
 import org.firstinspires.ftc.teamcode.util.LightingController;
-import org.firstinspires.ftc.teamcode.util.Prism.GoBildaPrismDriver;
-
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.AngleType;
-import dev.nextftc.control.feedback.FeedbackType;
-import dev.nextftc.control.feedback.PIDElement;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
@@ -34,19 +20,12 @@ import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.core.units.Angle;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.extensions.pedro.PedroDriverControlled;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.DriverControlledCommand;
 import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
-import dev.nextftc.hardware.impl.Direction;
-import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import kotlin.time.Instant;
-
 
 @TeleOp(name = "TeleOp")
 public class MainTeleOp extends NextFTCOpMode {
@@ -59,6 +38,9 @@ public class MainTeleOp extends NextFTCOpMode {
         );
     }
 
+    private double distanceOffset = 0;
+    private double lateralOffset = 0;
+
     private MecanumDriverControlled driverControlled;
     private double scalar = 1;
     private HeadingMode headingMode = HeadingMode.GAMEPAD;
@@ -68,11 +50,6 @@ public class MainTeleOp extends NextFTCOpMode {
     private final MotorEx frontRight = new MotorEx("frontRight").brakeMode();
     private final MotorEx backLeft = new MotorEx("backLeft").brakeMode();
     private final MotorEx backRight = new MotorEx("backRight").brakeMode();
-
-
-
-
-
 
     ControlSystem controller = ControlSystem.builder()
             .angular(AngleType.RADIANS,
@@ -92,7 +69,6 @@ public class MainTeleOp extends NextFTCOpMode {
     @Override
     public void onWaitForStart() {
         Gamepads.gamepad1().rightStickX();
-        //PedroComponent.follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
 
         LightingController.get().update();
         Pose robotPose = follower().getPose();
@@ -120,7 +96,7 @@ public class MainTeleOp extends NextFTCOpMode {
                             case GAMEPAD:
                                 return Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
                             case ABSOLUTE:
-                                return -controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                                return -controller.calculate(new KineticState(follower().getHeading()));
                             default:
                                 throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
                         }
@@ -139,7 +115,7 @@ public class MainTeleOp extends NextFTCOpMode {
                             case GAMEPAD:
                                 return (-1) * Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
                             case ABSOLUTE:
-                                return -controller.calculate(new KineticState(PedroComponent.follower().getHeading()));
+                                return -controller.calculate(new KineticState(follower().getHeading()));
                             default:
                                 throw new UnsupportedOperationException("Unknown heading mode: " + headingMode);
                         }
@@ -149,9 +125,8 @@ public class MainTeleOp extends NextFTCOpMode {
 
         driverControlled.schedule();
 
-        // follower().startTeleopDrive(true);
-
         Turret.INSTANCE.setTurretPosition(RobotState.TURRET_END_POS).schedule();
+
         // Intake Controls
         Gamepads.gamepad1().rightTrigger().greaterThan(0.1)
                 .whenBecomesTrue(Intake.INSTANCE.intakeArtifacts)
@@ -203,76 +178,63 @@ public class MainTeleOp extends NextFTCOpMode {
                 });
 
         // Debug Controls
-        Gamepads.gamepad2().circle()
+        Gamepads.gamepad2().triangle()
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(Flywheel.INSTANCE.enableDistanceOverride)
                 .whenBecomesFalse(Flywheel.INSTANCE.disableDistanceOverride);
 
         Gamepads.gamepad2().square()
-                .whenBecomesTrue(() -> RobotState.SOTM = !RobotState.SOTM);
+                .whenBecomesTrue(() -> follower().setPose(RobotState.GATE_RELOC_POSE));
 
         Gamepads.gamepad2().cross()
-                .whenBecomesTrue(new ParallelGroup(
-                        Turret.INSTANCE.setTurretPosition(0),
-                        new InstantCommand(() -> follower().setPose(RobotState.LOADING_ZONE))
-                ));
+                .whenBecomesTrue(() -> follower().setPose(RobotState.LOADING_ZONE));
 
         Gamepads.gamepad2().dpadUp()
-                .whenBecomesTrue(() -> RobotState.GOAL_POSE.plus(new Pose(-1, 1)));
+                .whenBecomesTrue(() -> {
+                    RobotState.GOAL_POSE.plus(new Pose(-1, 1));
+                    distanceOffset += 1;
+                });
 
         Gamepads.gamepad2().dpadDown()
-                .whenBecomesTrue(() -> RobotState.GOAL_POSE.minus(new Pose(-1, 1)));
+                .whenBecomesTrue(() -> {
+                    RobotState.GOAL_POSE.plus(new Pose(1, -1));
+                    distanceOffset -= 1;
+                });
+
         Gamepads.gamepad2().dpadLeft()
-                .whenBecomesTrue(Turret.INSTANCE.moveTurretBy(5));
+                .whenBecomesTrue(() -> {
+                    RobotState.GOAL_POSE.plus(new Pose(-1, 0));
+                    lateralOffset -= 1;
+                });
+
         Gamepads.gamepad2().dpadRight()
-                .whenBecomesTrue(Turret.INSTANCE.moveTurretBy(-5));
+                .whenBecomesTrue(() -> {
+                    RobotState.GOAL_POSE.plus(new Pose(1, 0));
+                    lateralOffset += 1;
+                });
     }
 
     @Override
     public void onUpdate() {
         driverControlled.setScalar(scalar);
-        // Drivetrain
+
         controller.setGoal(new KineticState(targetHeading));
-        /*
-        double headingPower = gamepad1.right_stick_x * -1;
-        if (headingMode == HeadingMode.ABSOLUTE) headingPower = controller.calculate(new KineticState(follower().getHeading()));
-
-        if (!holdPosition) {
-            follower().setTeleOpDrive(
-                    -gamepad1.left_stick_y * scalar,
-                    -gamepad1.left_stick_x * scalar,
-                    headingPower * scalar,
-                    false,
-                    (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) ? Math.toRadians(180) : 0
-            );
-        }
-
-         */
 
         LightingController.get().update();
 
         Pose robotPose = follower().getPose();
-        telemetry.addData("Robot X", robotPose.getX());
-        telemetry.addData("Robot Y", robotPose.getY());
-        telemetry.addData("Robot Heading", Math.toDegrees(robotPose.getHeading()));
+        telemetry.addData("Robot X", "%.2f", robotPose.getX());
+        telemetry.addData("Robot Y", "%.2f", robotPose.getY());
+        telemetry.addData("Robot Heading", "%.2f", Math.toDegrees(robotPose.getHeading()));
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.velocityCompensate(RobotState.GOAL_POSE));
-        telemetry.addData("Distance", robotPose.distanceFrom(RobotState.GOAL_POSE));
+        telemetry.addData("Distance Offset (in)", distanceOffset);
+        telemetry.addData("Lateral Offset L/R (in)", lateralOffset);
         telemetry.update();
-        drawOnlyCurrent();
     }
 
     @Override
     public void onStop() { }
-
-    public static void drawOnlyCurrent() {
-        try {
-            Drawing.drawRobot(follower().getPose());
-            Drawing.sendPacket();
-        } catch (Exception e) {
-            throw new RuntimeException("Drawing failed " + e);
-        }
-    }
 
     public enum HeadingMode {
         GAMEPAD,
