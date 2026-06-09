@@ -45,18 +45,6 @@ public class RobotState {
 
     public static boolean SOTM = false;
 
-    /*
-    public static final InterpLUT velocityLUT = new InterpLUT(
-            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 69.9892, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 132.8782, 135.4035, 144.2914), // Distance
-            Arrays.asList(1340.0, 1520.0, 1480.0, 1540.0, 1560.0, 1620.0, 1620.0, 1640.0, 1700.0, 1840.0, 2060.0, 2040.0, 2160.0) // Flywheel RPM
-    ).createLUT();
-
-    public static final InterpLUT hoodLUT = new InterpLUT(
-            Arrays.asList(41.611, 55.9399, 64.3681, 67.3679, 69.9892, 81.2249, 83.0044, 92.3683, 93.3369, 113.2097, 132.8782, 135.4035, 144.2914),
-            Arrays.asList(0.64, 0.58, 0.50, 0.48, 0.34, 0.36, 0.34, 0.32, 0.30, 0.24, 0.28, 0.20, 0.20)
-    ).createLUT();
-     */
-
     public static final InterpLUT velocityLUT = new InterpLUT(
             Arrays.asList(41.021, 48.0373, 51.1171, 62.0988, 68.3172, 73.3488, 86.1183, 97.4331, 127.7073, 129.9429, 137.5253, 142.0984),
             Arrays.asList(1180.0, 1180.0, 1220.0, 1280.0, 1320.0, 1340.0, 1460.0, 1540.0, 1820.0, 1860.0, 1880.0, 1900.0)
@@ -67,10 +55,7 @@ public class RobotState {
             Arrays.asList(0.60, 0.58, 0.56, 0.50, 0.44, 0.42, 0.30, 0.24, 0.16, 0.18, 0.16, 0.14)
     ).createLUT();
 
-    public static final InterpLUT tofLUT = new InterpLUT(
-            Arrays.asList(46.4387, 52.9599, 58.2837, 65.5336),
-            Arrays.asList(0.37, 0.47, 0.57, 0.67)
-    ).createLUT();
+    public static final double tofConst = 0.3;
 
     public static Pose velocityCompensate(Pose goalPose) {
         Pose robotPose = PedroComponent.follower().getPose();
@@ -78,8 +63,7 @@ public class RobotState {
 
         Pose compensated = goalPose;
         for (int i = 0; i < 2; i++) {
-            double distance = robotPose.distanceFrom(compensated);
-            compensated = MathUtils.velocityCompensatePose(compensated, velocity, tofLUT.get(distance));
+            compensated = MathUtils.velocityCompensatePose(compensated, velocity, tofConst);
         }
 
         return compensated;
