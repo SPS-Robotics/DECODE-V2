@@ -19,13 +19,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(14.5)
+            .mass(12.4)
             //.forwardZeroPowerAcceleration(-46.33404667873124)
             //.lateralZeroPowerAcceleration(-64.48561881981358)
             //.translationalPIDFCoefficients(new PIDFCoefficients(0.06, 0, 0.0001, 0.015))
             .headingPIDFCoefficients(new PIDFCoefficients(0.85, 0, 0.002, 0.002))
             //.drivePIDFCoefficients(new FilteredPIDFCoefficients(0.08, 0, 0.0005, 0.6, 0.00001))
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.07, 0.07949039844949009, 0.0022403106802267357))
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.16, 0.07949039844949009, 0.0022403106802267357))
             .centripetalScaling(0);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -48,8 +48,8 @@ public class Constants {
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
-            .yawScalar(1.000555864);
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            //.yawScalar(1.000555864);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.96, 100, 1, 1);
 

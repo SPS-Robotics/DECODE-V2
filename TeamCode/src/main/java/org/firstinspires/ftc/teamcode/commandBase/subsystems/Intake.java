@@ -48,12 +48,13 @@ public class Intake implements Subsystem {
 
     @Override
     public void initialize() {
-        intakeMotor.getMotor().setCurrentAlert(5000, CurrentUnit.MILLIAMPS);
+        intakeMotor.getMotor().setCurrentAlert(3900, CurrentUnit.MILLIAMPS);
     }
 
     @Override
     public void periodic() {
         hasThreeBalls = intakeMotor.getMotor().isOverCurrent();
         LightingController.get().setRobotFull(hasThreeBalls);
+        ActiveOpMode.telemetry().addData("intake current", intakeMotor.getMotor().getCurrent(CurrentUnit.MILLIAMPS));
     }
 }

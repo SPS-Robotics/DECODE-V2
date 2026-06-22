@@ -10,14 +10,14 @@ public class Constants {
         public static double ticksPerRevolution = 28.0 * (76.0 / 21.0) * (84.0 / 29.0); // Motor Encoder Calculation Required
         public static double pulleyRatio = 109.0/24.0; // Large Pulley Teeth / Small Pulley Teeth
 
-        public static double MIN_TICKS = -400;
+        public static double MIN_TICKS = -500;
         public static double MAX_TICKS = 600;
 
         public static double kP = 0.015;
         public static double kI = 0;
         public static double kD = 0.0003;
 
-        public static double RELOC_POS = 55;
+        public static double RELOC_POS = 100;
 
         public static double CENTRE_OFFSET = 110.0 / 127.0; // 22mm in inches
 
@@ -28,8 +28,8 @@ public class Constants {
         public static double INTAKE_POWER = 1;
         public static double OUTTAKE_POWER = -0.6;
 
-        public static double GATE_OPEN = 0.9;
-        public static double GATE_CLOSE = 0.5;
+        public static double GATE_OPEN = 0.6;
+        public static double GATE_CLOSE = 0.17;
 
         public static double GATE_OPEN_TIME = 0.4;
     }
@@ -60,8 +60,8 @@ public class Constants {
     }
 
     public static class Auto {
-        public static double SHOOT_TIME = 0.5;
-        public static double GATE_DELAY = 1.2;
+        public static double SHOOT_TIME = 0.9;
+        public static double GATE_DELAY = 1.8;
     }
 
     public static class Limelight {

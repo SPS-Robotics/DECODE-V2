@@ -62,7 +62,7 @@ public class MainTeleOp extends NextFTCOpMode {
         Flywheel.INSTANCE.turnFlywheelOff.schedule();
         Intake.INSTANCE.closeGate.schedule();
         LightingController.init();
-        RobotState.SOTM = false;
+        RobotState.SOTM = true;
         follower().setPose(new Pose(RobotState.AUTO_END_X, RobotState.AUTO_END_Y, RobotState.AUTO_END_HEADING));
     }
 
@@ -108,12 +108,12 @@ public class MainTeleOp extends NextFTCOpMode {
                     frontRight,
                     backLeft,
                     backRight,
-                    Gamepads.gamepad1().leftStickY().negate().map(x -> Math.pow(x, 2) * Math.signum(x)),
+                    Gamepads.gamepad1().leftStickY().map(x -> Math.pow(x, 2) * Math.signum(x)).negate(),
                     Gamepads.gamepad1().leftStickX().map(x -> Math.pow(x, 2) * Math.signum(x)),
                     () -> {
                         switch (headingMode) {
                             case GAMEPAD:
-                                return (-1) * Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
+                                return Math.pow(gamepad1.right_stick_x, 2) * Math.signum(gamepad1.right_stick_x);
                             case ABSOLUTE:
                                 return -controller.calculate(new KineticState(follower().getHeading()));
                             default:
@@ -184,32 +184,61 @@ public class MainTeleOp extends NextFTCOpMode {
                 .whenBecomesFalse(Flywheel.INSTANCE.disableDistanceOverride);
 
         Gamepads.gamepad2().square()
-                .whenBecomesTrue(() -> follower().setPose(RobotState.GATE_RELOC_POSE));
+                .whenBecomesTrue(() -> {
+                    follower().setPose(RobotState.GATE_RELOC_POSE);
+                    distanceOffset = 0;
+                    lateralOffset = 0;
+                });
 
         Gamepads.gamepad2().cross()
-                .whenBecomesTrue(() -> follower().setPose(RobotState.LOADING_ZONE));
+                .whenBecomesTrue(() -> {
+                    follower().setPose(RobotState.LOADING_ZONE);
+                    distanceOffset = 0;
+                    lateralOffset = 0;
+                });
 
         Gamepads.gamepad2().dpadUp()
                 .whenBecomesTrue(() -> {
-                    RobotState.GOAL_POSE.plus(new Pose(-1, 1));
+                    if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(-1, 1));
+                    }
+                    else {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(1, 1));
+                    }
                     distanceOffset += 1;
+
                 });
 
         Gamepads.gamepad2().dpadDown()
                 .whenBecomesTrue(() -> {
-                    RobotState.GOAL_POSE.plus(new Pose(1, -1));
+                    if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(1, -1));
+                    }
+                    else {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(-1, -1));
+                    }
                     distanceOffset -= 1;
                 });
 
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(() -> {
-                    RobotState.GOAL_POSE.plus(new Pose(-1, 0));
+                    if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(-1, -1));
+                    }
+                    else {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(-1, 1));
+                    }
                     lateralOffset -= 1;
                 });
 
         Gamepads.gamepad2().dpadRight()
                 .whenBecomesTrue(() -> {
-                    RobotState.GOAL_POSE.plus(new Pose(1, 0));
+                    if (RobotState.ALLIANCE_COLOR == RobotState.AllianceColor.BLUE) {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(1, 1));
+                    }
+                    else {
+                        RobotState.GOAL_POSE = RobotState.GOAL_POSE.plus(new Pose(1, -1));
+                    }
                     lateralOffset += 1;
                 });
     }

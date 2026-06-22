@@ -22,8 +22,12 @@ import org.firstinspires.ftc.teamcode.util.MathUtils;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
+import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -48,17 +52,26 @@ public abstract class CloseGate18 extends NextFTCOpMode {
     private Pose startPose = new Pose(13.6, 111.4, Math.toRadians(0));
 
     private double preloadHeading = Math.toRadians(323);
-    private Pose middleSpikePose = new Pose(12, 59.9, Math.toRadians(180));
+    private Pose middleSpikePose = new Pose(13, 57.5, Math.toRadians(180));
     private Pose middleSpikeControl = new Pose(52.5, 56.5);
 
-    private Pose scorePose = new Pose(55, 83);
+    private Pose scoreMiddleSpikeControl = new Pose(50, 70);
 
-    private double gateIntakeStartHeading = Math.toRadians(180);
+    private Pose scorePose = new Pose(53, 83);
 
-    private Pose gateIntakePose = new Pose(12, 57.5, Math.toRadians(150));
+    private double gateIntakeStartHeading = Math.toRadians(211);
+    private Pose gateOpenPose = new Pose(17, 70, Math.toRadians(180));
 
-    private Pose closeSpikePose = new Pose(16, 84, Math.toRadians(180));
-    private Pose endPose = new Pose(24, 70, Math.toRadians(180));
+    private Pose gateOpenControl = new Pose(48, 69);
+
+    private Pose gateControl = new Pose(19, 60);
+
+    private Pose gateControlFirst = new Pose(28, 50);
+
+    private Pose gateIntakePose = new Pose(11, 57.8, Math.toRadians(152));
+
+    private Pose closeSpikePose = new Pose(18, 84, Math.toRadians(180));
+    private Pose endPose = new Pose(24, 80, Math.toRadians(180));
 
     private void initPoses() {
         if (alliance == RobotState.AllianceColor.RED) {
@@ -66,15 +79,20 @@ public abstract class CloseGate18 extends NextFTCOpMode {
             preloadHeading = MathUtils.mirrorHeading(preloadHeading);
             middleSpikePose = middleSpikePose.mirror();
             middleSpikeControl = middleSpikeControl.mirror();
+            scoreMiddleSpikeControl = scoreMiddleSpikeControl.mirror();
             scorePose = scorePose.mirror();
             gateIntakeStartHeading = MathUtils.mirrorHeading(gateIntakeStartHeading);
+            gateOpenPose = gateOpenPose.mirror();
+            gateOpenControl = gateOpenControl.mirror();
+            gateControl = gateControl.mirror();
+            gateControlFirst = gateControlFirst.mirror();
             gateIntakePose = gateIntakePose.mirror();
             closeSpikePose = closeSpikePose.mirror();
             endPose = endPose.mirror();
         }
     }
 
-    private PathChain scorePreload, intakeMiddleSpike, scoreMiddleSpike, gateIntake, scoreGate, intakeCloseSpike, scoreCloseSpike, parkPath;
+    private PathChain scorePreload, intakeMiddleSpike, scoreMiddleSpike, openFirstGate, openGate, gateIntake, gateIntakeOld, scoreGate, intakeCloseSpike, scoreCloseSpike, parkPath;
 
     private void buildPaths() {
         scorePreload = follower().pathBuilder()
@@ -113,28 +131,57 @@ public abstract class CloseGate18 extends NextFTCOpMode {
                 )
                 .build();
 
+        openFirstGate = follower().pathBuilder()
+                .addPath(new BezierCurve(middleSpikePose, gateControlFirst, gateOpenPose))
+                .setConstantHeadingInterpolation(gateOpenPose.getHeading())
+                .build();
+
         scoreMiddleSpike = follower().pathBuilder()
-                .addPath(new BezierLine(middleSpikePose, scorePose))
-                .setTangentHeadingInterpolation()
-                .setReversed()
+                .addPath(new BezierCurve(gateOpenPose, scoreMiddleSpikeControl, scorePose))
+                .setLinearHeadingInterpolation(middleSpikePose.getHeading(), gateIntakeStartHeading)
+                .build();
+
+        openGate = follower().pathBuilder()
+                .addPath(new BezierCurve(scorePose, gateOpenControl, gateOpenPose))
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(
+                                        0,
+                                        0.5,
+                                        HeadingInterpolator.tangent
+                                ),
+                            new HeadingInterpolator.PiecewiseNode(
+                                    0.5,
+                                    1,
+                                    HeadingInterpolator.constant(gateOpenPose.getHeading())
+                            )
+                        )
+                )
                 .build();
 
         gateIntake = follower().pathBuilder()
+                .addPath(new BezierCurve(gateOpenPose, gateControl, gateIntakePose))
+                .setConstantHeadingInterpolation(gateIntakePose.getHeading())
+                .build();
+
+        gateIntakeOld = follower().pathBuilder()
                 .addPath(new BezierLine(scorePose, gateIntakePose))
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
                                 new HeadingInterpolator.PiecewiseNode(
                                         0,
-                                        0.7,
+                                        0.5,
                                         HeadingInterpolator.constant(gateIntakeStartHeading)
                                 ),
                                 new HeadingInterpolator.PiecewiseNode(
-                                        0.7,
+                                        0.5,
                                         1,
                                         HeadingInterpolator.linear(gateIntakeStartHeading, gateIntakePose.getHeading())
                                 )
                         )
                 )
+                .addParametricCallback(0.5, () -> follower().setMaxPower(0.4))
+                .addParametricCallback(0.8, () -> follower().setMaxPower(1))
                 .build();
 
         scoreGate = follower().pathBuilder()
@@ -150,7 +197,20 @@ public abstract class CloseGate18 extends NextFTCOpMode {
 
         scoreCloseSpike = follower().pathBuilder()
                 .addPath(new BezierLine(closeSpikePose, scorePose))
-                .setConstantHeadingInterpolation(closeSpikePose.getHeading())
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(
+                                        0,
+                                        0.3,
+                                        HeadingInterpolator.constant(closeSpikePose.getHeading())
+                                ),
+                                new HeadingInterpolator.PiecewiseNode(
+                                        0.3,
+                                        1,
+                                        HeadingInterpolator.linear(closeSpikePose.getHeading(), gateIntakeStartHeading)
+                                )
+                        )
+                )
                 .build();
 
         parkPath = follower().pathBuilder()
@@ -191,83 +251,135 @@ public abstract class CloseGate18 extends NextFTCOpMode {
 
                 // Intake Middle Spike
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(intakeMiddleSpike),
-                Intake.INSTANCE.stopIntake,
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new FollowPath(intakeMiddleSpike),
+                                Intake.INSTANCE.stopIntake,
+                                new FollowPath(openFirstGate)
+                        ),
+                        new Delay(7)
+                ),
+
 
                 // Score Middle Spike
-                new ParallelGroup(
-                        new FollowPath(scoreMiddleSpike),
-                        Intake.INSTANCE.openGate
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new ParallelGroup(
+                                        new FollowPath(scoreMiddleSpike),
+                                        Intake.INSTANCE.openGate
+                                ),
+                                shootArtifacts()
+                                ),
+                        new Delay(4.5)
+                ),
+
+
+                // Gate Intake
+                Intake.INSTANCE.intakeArtifacts,
+                new FollowPath(openGate),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new FollowPath(gateIntake),
+                                new ParallelRaceGroup(
+                                        new Delay(GATE_DELAY),
+                                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                                )
                         ),
-                shootArtifacts(),
-
-                // Gate Intake
-                Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
+                        new Delay(2)
+                ),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
-                new ParallelGroup(
-                        new FollowPath(scoreGate),
-                        Intake.INSTANCE.openGate
+                new InstantCommand(() -> follower().setMaxPower(1)),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new ParallelGroup(
+                                        new FollowPath(scoreGate),
+                                        Intake.INSTANCE.openGate
+                                ),
+                                shootArtifacts()
+                        ),
+                        new Delay(4.5)
                 ),
-                shootArtifacts(),
 
-                // Gate Intake
-                Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
-                Intake.INSTANCE.stopIntake,
-
-                // Score Gate
-                new ParallelGroup(
-                        new FollowPath(scoreGate),
-                        Intake.INSTANCE.openGate
-                ),
-                shootArtifacts(),
 
                 // Intake Close Spike
-                Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(intakeCloseSpike),
-                Intake.INSTANCE.stopIntake,
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                            Intake.INSTANCE.intakeArtifacts,
+                            new FollowPath(intakeCloseSpike),
+                            Intake.INSTANCE.stopIntake
+                        ),
+                        new Delay(3)
+                ),
 
                 // Score Close Spike
-                new ParallelGroup(
-                        new FollowPath(scoreCloseSpike),
-                        Intake.INSTANCE.openGate
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                            new ParallelGroup(
+                                    new FollowPath(scoreCloseSpike),
+                                    Intake.INSTANCE.openGate
+                            ),
+                            shootArtifacts()
+                        ),
+                        new Delay(4.5)
                 ),
-                shootArtifacts(),
 
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
+                new FollowPath(openGate),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new FollowPath(gateIntake),
+                                new ParallelRaceGroup(
+                                        new Delay(GATE_DELAY),
+                                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                                )
+                        ),
+                        new Delay(2)
+                ),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
-                new ParallelGroup(
-                        new FollowPath(scoreGate),
-                        Intake.INSTANCE.openGate
+                new InstantCommand(() -> follower().setMaxPower(1)),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                            new ParallelGroup(
+                                    new FollowPath(scoreGate),
+                                    Intake.INSTANCE.openGate
+                            ),
+                            shootArtifacts()
+                        ),
+                        new Delay(4.5)
                 ),
-                shootArtifacts(),
-
-                /*
 
                 // Gate Intake
                 Intake.INSTANCE.intakeArtifacts,
-                new FollowPath(gateIntake),
-                new Delay(GATE_DELAY),
+                new FollowPath(openGate),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new FollowPath(gateIntake),
+                                new ParallelRaceGroup(
+                                        new Delay(GATE_DELAY),
+                                        new WaitUntil(() -> Intake.INSTANCE.hasThreeBalls)
+                                )
+                        ),
+                        new Delay(2)
+                ),
                 Intake.INSTANCE.stopIntake,
 
                 // Score Gate
-                new ParallelGroup(
-                        new FollowPath(scoreGate),
-                        Intake.INSTANCE.openGate
+                new InstantCommand(() -> follower().setMaxPower(1)),
+                new ParallelRaceGroup(
+                        new SequentialGroup(
+                                new ParallelGroup(
+                                        new FollowPath(scoreGate),
+                                        Intake.INSTANCE.openGate
+                                ),
+                                shootArtifacts()
+                        ),
+                        new Delay(4.5)
                 ),
-                shootArtifacts(),
-
-                 */
 
                 // Park in front of gate
                 new FollowPath(parkPath)
@@ -305,6 +417,8 @@ public abstract class CloseGate18 extends NextFTCOpMode {
         telemetry.addData("Robot Heading", robotPose.getHeading());
         telemetry.addData("Alliance", RobotState.ALLIANCE_COLOR);
         telemetry.addData("Goal Pose", RobotState.GOAL_POSE);
+        telemetry.addData("MaxPower", follower().getMaxPowerScaling());
+        telemetry.addData("Param Path Pos", follower().getPathCompletion());
         telemetry.update();
         LightingController.get().update();
     }
